@@ -125,6 +125,18 @@ export default function LoginPage() {
             {error}
           </p>
         ))}
+        <p className={styles.notification}>
+          <a
+            className={styles.link}
+            href="https://luna-matching.notion.site/a714620bbd8740d1ac98f2326fbd0bbc"
+            target="_blank"
+          >
+            利用規約
+          </a>
+          の確認をお願いいたします。
+          <br />
+          登録をした場合、利用規約に同意したものとします。
+        </p>
         <div className={commonStyles.buttonBox}>
           <button type="submit" className={commonStyles.button}>
             新規登録
