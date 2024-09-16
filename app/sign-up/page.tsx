@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import commonStyles from "@/app/ui/common.module.css";
-import styles from "./page.module.css";
+import formStyles from "@/app/ui/form.module.css";
 import clsx from "clsx";
 import { MainContent } from "@/app/ui/MainContent";
 import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
@@ -85,72 +85,72 @@ export default function LoginPage() {
 
   return (
     <MainContent>
-      <h1 className={styles.label}>EX Open Posts</h1>
-      <p className={styles.description}>新規登録をしましょう！</p>
+      <h1 className={formStyles.label}>EX Open Posts</h1>
+      <p className={formStyles.description}>新規登録をしましょう！</p>
       <form onSubmit={handleSubmit}>
-        <div className={styles.inputWrapper}>
-          <label htmlFor="email" className={styles.inputLabel}>
+        <div className={formStyles.inputWrapper}>
+          <label htmlFor="email" className={formStyles.inputLabel}>
             メールアドレス
           </label>
-          <div className={styles.inputAndError}>
+          <div className={formStyles.inputAndError}>
             <input
               id="email"
               type="email"
               placeholder="メールアドレス"
-              className={styles.textInput}
+              className={formStyles.textInput}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             {fieldErrors?.email?.map((error) => (
-              <p key={error} className={styles.inputError}>
+              <p key={error} className={formStyles.inputError}>
                 {error}
               </p>
             ))}
           </div>
         </div>
-        <div className={styles.inputWrapper}>
-          <label htmlFor="password" className={styles.inputLabel}>
+        <div className={formStyles.inputWrapper}>
+          <label htmlFor="password" className={formStyles.inputLabel}>
             パスワード
           </label>
-          <div className={styles.inputAndError}>
+          <div className={formStyles.inputAndError}>
             <input
               id="password"
               type="password"
               placeholder="パスワード"
-              className={styles.textInput}
+              className={formStyles.textInput}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             {fieldErrors?.password?.map((error) => (
-              <p key={error} className={styles.inputError}>
+              <p key={error} className={formStyles.inputError}>
                 {error}
               </p>
             ))}
           </div>
         </div>
-        <div className={styles.inputWrapper}>
-          <label htmlFor="reinputPassword" className={styles.inputLabel}>
+        <div className={formStyles.inputWrapper}>
+          <label htmlFor="reinputPassword" className={formStyles.inputLabel}>
             パスワード(再入力)
           </label>
-          <div className={styles.inputAndError}>
+          <div className={formStyles.inputAndError}>
             <input
               id="reinputPassword"
               type="password"
               placeholder="パスワード(再入力)"
-              className={styles.textInput}
+              className={formStyles.textInput}
               value={reInputPassword}
               onChange={(e) => setReInputPassword(e.target.value)}
             />
             {fieldErrors?.reInputPassword?.map((error) => (
-              <p key={error} className={styles.inputError}>
+              <p key={error} className={formStyles.inputError}>
                 {error}
               </p>
             ))}
           </div>
         </div>
-        <p className={styles.notification}>
+        <p className={formStyles.notification}>
           <a
-            className={styles.link}
+            className={formStyles.link}
             href="https://luna-matching.notion.site/a714620bbd8740d1ac98f2326fbd0bbc"
             target="_blank"
           >
@@ -171,7 +171,11 @@ export default function LoginPage() {
             キャンセル
           </Link>
         </div>
-        {signUpError && <p className={styles.inputError}>{signUpError}</p>}
+        {signUpError && (
+          <p className={clsx(formStyles.inputError, formStyles.center)}>
+            {signUpError}
+          </p>
+        )}
       </form>
     </MainContent>
   );

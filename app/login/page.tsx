@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MainContent } from "@/app/ui/MainContent";
-import styles from "./page.module.css";
+import formStyles from "@/app/ui/form.module.css";
 import commonStyles from "@/app/ui/common.module.css";
 import { typeToFlattenedError, z } from "zod";
 import { FormEventHandler, useState } from "react";
@@ -57,45 +57,45 @@ export default function LoginPage() {
 
   return (
     <MainContent>
-      <h1 className={styles.label}>EX Open Posts</h1>
-      <p className={styles.description}>ログインをしましょう！</p>
+      <h1 className={formStyles.label}>EX Open Posts</h1>
+      <p className={formStyles.description}>ログインをしましょう！</p>
       <div>
         <form onSubmit={handleSubmit}>
-          <div className={styles.inputWrapper}>
-            <label htmlFor="email" className={styles.inputLabel}>
+          <div className={formStyles.inputWrapper}>
+            <label htmlFor="email" className={formStyles.inputLabel}>
               メールアドレス
             </label>
-            <div className={styles.inputAndError}>
+            <div className={formStyles.inputAndError}>
               <input
                 id="email"
                 type="email"
                 placeholder="メールアドレス"
-                className={styles.textInput}
+                className={formStyles.textInput}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               {fieldErrors?.email?.map((error) => (
-                <p key={error} className={styles.inputError}>
+                <p key={error} className={formStyles.inputError}>
                   {error}
                 </p>
               ))}
             </div>
           </div>
-          <div className={styles.inputWrapper}>
-            <label htmlFor="password" className={styles.inputLabel}>
+          <div className={formStyles.inputWrapper}>
+            <label htmlFor="password" className={formStyles.inputLabel}>
               パスワード
             </label>
-            <div className={styles.inputAndError}>
+            <div className={formStyles.inputAndError}>
               <input
                 id="password"
                 type="password"
                 placeholder="パスワード"
-                className={styles.textInput}
+                className={formStyles.textInput}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               {fieldErrors?.password?.map((error) => (
-                <p key={error} className={styles.inputError}>
+                <p key={error} className={formStyles.inputError}>
                   {error}
                 </p>
               ))}
@@ -113,13 +113,13 @@ export default function LoginPage() {
             </Link>
           </div>
           {loginError && (
-            <p className={clsx(styles.inputError, styles.center)}>
+            <p className={clsx(formStyles.inputError, formStyles.center)}>
               {loginError}
             </p>
           )}
-          <p className={styles.notification}>
+          <p className={formStyles.notification}>
             ユーザー登録は
-            <Link className={styles.link} href="/sign-up">
+            <Link className={formStyles.link} href="/sign-up">
               こちら
             </Link>
             から。
