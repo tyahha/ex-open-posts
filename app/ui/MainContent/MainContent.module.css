@@ -1,0 +1,15 @@
+.main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  border-radius: 16px;
+  width: 720px;
+  background-color: #00CCDD;
+  margin: 16px;
+  padding: 16px;
+}
