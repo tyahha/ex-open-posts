@@ -37,7 +37,16 @@ export default function PostsPage() {
           <PleaseVerifyEmail firebaseUser={currentUser.firebaseUser} />
         )}
         {currentUser.authState === AUTH_STATE.HAS_NOT_REGISTERED_PROFILE && (
-          <PleaseRegisterProfile />
+          <PleaseRegisterProfile
+            firebaseUser={currentUser.firebaseUser}
+            onRegisterUser={(user) =>
+              setCurrentUser({
+                authState: AUTH_STATE.LOGGED_IN,
+                firebaseUser: currentUser.firebaseUser,
+                user,
+              })
+            }
+          />
         )}
         {currentUser.authState === AUTH_STATE.LOGGED_IN && <Posts />}
       </MainContent>

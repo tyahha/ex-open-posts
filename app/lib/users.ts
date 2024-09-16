@@ -2,7 +2,7 @@ import {
   getFirebaseAuth,
   getFirestore,
 } from "@/app/lib/firebase/firebaseConfig";
-import { doc, getDoc } from "@firebase/firestore";
+import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { RawUser } from "@/app/lib/firebase/types";
 import { User as FirebaseUser } from "firebase/auth";
 
@@ -12,7 +12,7 @@ export const GENDER = <const>{
   OTHER: "OTHER",
 };
 
-type Gender = (typeof GENDER)[keyof typeof GENDER];
+export type Gender = (typeof GENDER)[keyof typeof GENDER];
 
 export type User = {
   id: string;
@@ -80,5 +80,20 @@ export const getCurrentUser = async (): Promise<CurrentUser> => {
       id: docRef.id,
       ...rawUser,
     },
+  };
+};
+
+export const registerUser = async (
+  id: string,
+  rawUser: RawUser,
+): Promise<User> => {
+  const firestore = getFirestore();
+
+  const docRef = doc(firestore, `/users/${id}`);
+  await setDoc(docRef, rawUser);
+
+  return {
+    id,
+    ...rawUser,
   };
 };

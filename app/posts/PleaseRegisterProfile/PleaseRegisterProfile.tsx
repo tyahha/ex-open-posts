@@ -1,7 +1,8 @@
+import { User as FirebaseUser } from "firebase/auth";
 import formStyles from "@/app/ui/form.module.css";
 import { FormEventHandler, useState } from "react";
 import { typeToFlattenedError, z } from "zod";
-import { GENDER } from "@/app/lib/users";
+import { GENDER, registerUser, User, Gender } from "@/app/lib/users";
 import commonStyles from "@/app/ui/common.module.css";
 import clsx from "clsx";
 import DatePicker from "react-datepicker";
@@ -27,7 +28,15 @@ const RegisterProfileFormSchema = z.object({
   }),
 });
 
-export const PleaseRegisterProfile = () => {
+type Props = {
+  firebaseUser: FirebaseUser;
+  onRegisterUser: (user: User) => void;
+};
+
+export const PleaseRegisterProfile = ({
+  firebaseUser,
+  onRegisterUser,
+}: Props) => {
   const [name, setName] = useState("");
   const [birthDay, setBirthDay] = useState("");
   const [gender, setGender] = useState("");
@@ -60,7 +69,17 @@ export const PleaseRegisterProfile = () => {
       return;
     }
 
-    console.log("valid user input");
+    try {
+      const user = await registerUser(firebaseUser.uid, {
+        name,
+        birthDay,
+        gender: gender as Gender,
+      });
+
+      onRegisterUser(user);
+    } catch {
+      setRegisterError("エラーが発生しました。");
+    }
   };
 
   return (
