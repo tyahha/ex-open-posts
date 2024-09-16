@@ -23,7 +23,7 @@ export default function PostsPage() {
   });
 
   useEffect(() => {
-    if (currentUser) return;
+    if (currentUser.authState !== AUTH_STATE.LOGGED_OUT) return;
 
     getCurrentUser().then((authStateWithUser) => {
       if (authStateWithUser.authState === AUTH_STATE.LOGGED_OUT) {
@@ -31,11 +31,7 @@ export default function PostsPage() {
         return;
       }
 
-      setCurrentUser(currentUser);
-
-      if (currentUser === AUTH_STATE.LOGGED_IN) {
-        setCurrentUser(authStateWithUser);
-      }
+      setCurrentUser(authStateWithUser);
     });
   }, [currentUser, router]);
 
@@ -44,7 +40,7 @@ export default function PostsPage() {
       <Header />
       <MainContent>
         {currentUser.authState === AUTH_STATE.HAS_NOT_VERIFIED_EMAIL && (
-          <PleaseVerifyEmail />
+          <PleaseVerifyEmail firebaseUser={currentUser.firebaseUser} />
         )}
         {currentUser.authState === AUTH_STATE.HAS_NOT_REGISTERED_PROFILE && (
           <PleaseRegisterProfile />
