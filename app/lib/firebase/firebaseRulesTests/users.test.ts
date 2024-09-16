@@ -43,15 +43,21 @@ describe("users rules", () => {
       });
 
       describe("authenticated", () => {
-        const subject = async () => {
+        const subject = async (data: RawUser = validData) => {
           const userId = "valid-user-id";
           const firestore = testEnv.authenticatedContext(userId).firestore();
           const docRef = await doc(firestore, `/users/${userId}`);
-          return setDoc(docRef, validData);
+          return setDoc(docRef, data);
         };
 
         it("should success to create", async () => {
           await assertSucceeds(subject());
+        });
+
+        describe.each(Object.values(GENDER))("gender %s", (gender) => {
+          it("should success to create", async () => {
+            await assertSucceeds(subject({ ...validData, gender }));
+          });
         });
       });
     });
