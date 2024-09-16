@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import Image from "next/image";
 import clsx from "clsx";
 import styles from "./Header.module.css";
@@ -30,7 +30,7 @@ export const Header = () => {
   const router = useRouter();
 
   const logout = async () => {
-    const auth = getFirestoreAuth();
+    const auth = getFirebaseAuth();
     await auth.signOut();
     router.replace("/");
   };

@@ -5,7 +5,7 @@ import commonStyles from "@/app/ui/common.module.css";
 import styles from "./page.module.css";
 import clsx from "clsx";
 import { MainContent } from "@/app/ui/MainContent";
-import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import { FormEventHandler, useState } from "react";
 import { z, typeToFlattenedError } from "zod";
 import {
@@ -70,7 +70,7 @@ export default function LoginPage() {
     }
 
     try {
-      const auth = getFirestoreAuth();
+      const auth = getFirebaseAuth();
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,

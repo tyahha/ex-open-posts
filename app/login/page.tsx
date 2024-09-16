@@ -7,7 +7,7 @@ import commonStyles from "@/app/ui/common.module.css";
 import { typeToFlattenedError, z } from "zod";
 import { FormEventHandler, useState } from "react";
 import clsx from "clsx";
-import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { useRouter } from "next/navigation";
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
     }
 
     try {
-      const auth = getFirestoreAuth();
+      const auth = getFirebaseAuth();
       await signInWithEmailAndPassword(auth, email, password);
       router.replace("/posts");
     } catch {
