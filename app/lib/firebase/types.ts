@@ -1,13 +1,3 @@
-export const GENDER = <const>{
-  MALE: "MALE",
-  FEMALE: "FEMALE",
-  OTHER: "OTHER",
-};
+import { User } from "@/app/lib/users";
 
-type Gender = (typeof GENDER)[keyof typeof GENDER];
-
-export type RawUser = {
-  name: string;
-  birthDay: string;
-  gender: Gender;
-};
+export type RawUser = Omit<User, "id">;
