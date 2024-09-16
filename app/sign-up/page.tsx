@@ -12,6 +12,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "@firebase/auth";
+import { useRouter } from "next/navigation";
 
 const SignUpFormSchema = z
   .object({
@@ -49,6 +50,8 @@ export default function LoginPage() {
   >();
   const [signUpError, setSignUpError] = useState<string | undefined>(undefined);
 
+  const router = useRouter();
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -73,7 +76,11 @@ export default function LoginPage() {
         email,
         password,
       );
-      await sendEmailVerification(userCredential.user);
+      await sendEmailVerification(userCredential.user, {
+        url: `${location.origin}/posts`,
+      });
+
+      router.replace("/auth/sent-email");
     } catch (e) {
       // NOTE: ２重登録の対応度などはスコープ外とさせていただきます。
       setSignUpError("エラーが発生しました");
