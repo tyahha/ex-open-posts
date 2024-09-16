@@ -2,13 +2,7 @@
 
 import { Header } from "./Header";
 import { useEffect, useState } from "react";
-import {
-  AUTH_STATE,
-  AuthState,
-  getCurrentUser,
-  User,
-  CurrentUser,
-} from "@/app/lib/users";
+import { AUTH_STATE, getCurrentUser, CurrentUser } from "@/app/lib/users";
 import { useRouter } from "next/navigation";
 import { MainContent } from "@/app/ui/MainContent";
 import { PleaseVerifyEmail } from "@/app/posts/PleaseVerifyEmail";
