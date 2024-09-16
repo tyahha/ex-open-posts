@@ -6,7 +6,6 @@ import {
 } from "@firebase/rules-unit-testing";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { GENDER, RawUser } from "@/app/lib/firebase/types";
-import { beforeEach } from "node:test";
 
 const projectId = "users-rules-test";
 
