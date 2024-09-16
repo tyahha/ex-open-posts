@@ -38,7 +38,7 @@ export const PleaseRegisterProfile = ({
   onRegisterUser,
 }: Props) => {
   const [name, setName] = useState("");
-  const [birthDay, setBirthDay] = useState("");
+  const [birthDay, setBirthDay] = useState("1990-01-01");
   const [gender, setGender] = useState("");
   const [fieldErrors, setFieldErrors] = useState<
     | typeToFlattenedError<{
@@ -110,7 +110,7 @@ export const PleaseRegisterProfile = ({
         </label>
         <div className={formStyles.inputAndError}>
           <DatePicker
-            selected={parse(birthDay || "1990-01-01", "yyyy-MM-dd", new Date())}
+            selected={parse(birthDay, "yyyy-MM-dd", new Date())}
             onChange={(date) => {
               if (!date) return;
               setBirthDay(format(date, "yyyy-MM-dd"));
