@@ -7,6 +7,9 @@ import commonStyles from "@/app/ui/common.module.css";
 import { typeToFlattenedError, z } from "zod";
 import { FormEventHandler, useState } from "react";
 import clsx from "clsx";
+import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { signInWithEmailAndPassword } from "@firebase/auth";
+import { useRouter } from "next/navigation";
 
 const LoginFormSchema = z.object({
   email: z.string().email("メールアドレスを入力してください"),
@@ -25,6 +28,8 @@ export default function LoginPage() {
   >();
   const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
+  const router = useRouter();
+
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -41,7 +46,13 @@ export default function LoginPage() {
       return;
     }
 
-    console.log("TODO try to login");
+    try {
+      const auth = getFirestoreAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace("/posts");
+    } catch {
+      setLoginError("メールアドレスかパスワードが間違えています。");
+    }
   };
 
   return (
@@ -101,6 +112,11 @@ export default function LoginPage() {
               キャンセル
             </Link>
           </div>
+          {loginError && (
+            <p className={clsx(styles.inputError, styles.center)}>
+              {loginError}
+            </p>
+          )}
           <p className={styles.notification}>
             ユーザー登録は
             <Link className={styles.link} href="/sign-up">
@@ -108,7 +124,6 @@ export default function LoginPage() {
             </Link>
             から。
           </p>
-          {loginError && <p className={styles.inputError}>{loginError}</p>}
         </form>
       </div>
     </MainContent>

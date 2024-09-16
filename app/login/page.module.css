@@ -38,6 +38,10 @@
   padding-left: 4px;
   color: red;
   font-size: 12px;
+
+  &.center {
+    text-align: center;
+  }
 }
 
 .notification {
