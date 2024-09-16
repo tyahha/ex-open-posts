@@ -24,14 +24,18 @@
   flex-shrink: 0;
 }
 
-.textInput {
-  font-size: 20px;
+.inputAndError {
   flex-grow: 1;
+}
+
+.textInput {
+  width: 100%;
+  font-size: 20px;
   padding: 4px 8px;
 }
 
 .inputError {
-  padding: 0 16px;
+  padding-left: 4px;
   color: red;
   font-size: 12px;
 }

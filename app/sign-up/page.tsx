@@ -75,56 +75,62 @@ export default function LoginPage() {
           <label htmlFor="email" className={styles.inputLabel}>
             メールアドレス
           </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="メールアドレス"
-            className={styles.textInput}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <div className={styles.inputAndError}>
+            <input
+              id="email"
+              type="email"
+              placeholder="メールアドレス"
+              className={styles.textInput}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {fieldErrors?.email?.map((error) => (
+              <p key={error} className={styles.inputError}>
+                {error}
+              </p>
+            ))}
+          </div>
         </div>
-        {fieldErrors?.email?.map((error) => (
-          <p key={error} className={styles.inputError}>
-            {error}
-          </p>
-        ))}
         <div className={styles.inputWrapper}>
           <label htmlFor="password" className={styles.inputLabel}>
             パスワード
           </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="パスワード"
-            className={styles.textInput}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className={styles.inputAndError}>
+            <input
+              id="password"
+              type="password"
+              placeholder="パスワード"
+              className={styles.textInput}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {fieldErrors?.password?.map((error) => (
+              <p key={error} className={styles.inputError}>
+                {error}
+              </p>
+            ))}
+          </div>
         </div>
-        {fieldErrors?.password?.map((error) => (
-          <p key={error} className={styles.inputError}>
-            {error}
-          </p>
-        ))}
         <div className={styles.inputWrapper}>
           <label htmlFor="reinputPassword" className={styles.inputLabel}>
             パスワード(再入力)
           </label>
-          <input
-            id="reinputPassword"
-            type="password"
-            placeholder="パスワード(再入力)"
-            className={styles.textInput}
-            value={reInputPassword}
-            onChange={(e) => setReInputPassword(e.target.value)}
-          />
+          <div className={styles.inputAndError}>
+            <input
+              id="reinputPassword"
+              type="password"
+              placeholder="パスワード(再入力)"
+              className={styles.textInput}
+              value={reInputPassword}
+              onChange={(e) => setReInputPassword(e.target.value)}
+            />
+            {fieldErrors?.reInputPassword?.map((error) => (
+              <p key={error} className={styles.inputError}>
+                {error}
+              </p>
+            ))}
+          </div>
         </div>
-        {fieldErrors?.reInputPassword?.map((error) => (
-          <p key={error} className={styles.inputError}>
-            {error}
-          </p>
-        ))}
         <p className={styles.notification}>
           <a
             className={styles.link}
