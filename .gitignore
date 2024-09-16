@@ -38,3 +38,6 @@ next-env.d.ts
 
 # IntelliJ
 .idea
+
+# log(firebase emulators and so on)
+*.log
