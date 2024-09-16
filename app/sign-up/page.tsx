@@ -8,6 +8,10 @@ import { MainContent } from "@/app/ui/MainContent";
 import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
 import { FormEventHandler, useState } from "react";
 import { z, typeToFlattenedError } from "zod";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "@firebase/auth";
 
 const SignUpFormSchema = z
   .object({
@@ -32,9 +36,6 @@ const SignUpFormSchema = z
   });
 
 export default function LoginPage() {
-  // TODO: あとで削除する
-  console.log("auth", getFirestoreAuth().name);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [reInputPassword, setReInputPassword] = useState("");
@@ -46,11 +47,13 @@ export default function LoginPage() {
       }>["fieldErrors"]
     | undefined
   >();
+  const [signUpError, setSignUpError] = useState<string | undefined>(undefined);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     setFieldErrors(undefined);
+    setSignUpError(undefined);
 
     const result = SignUpFormSchema.safeParse({
       email,
@@ -60,9 +63,20 @@ export default function LoginPage() {
 
     if (result.error) {
       setFieldErrors(result.error.flatten().fieldErrors);
-    } else {
-      // TODO: firebase authenticationで登録処理をする
-      console.log("入力成功", result);
+      return;
+    }
+
+    try {
+      const auth = getFirestoreAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      await sendEmailVerification(userCredential.user);
+    } catch (e) {
+      // NOTE: ２重登録の対応度などはスコープ外とさせていただきます。
+      setSignUpError("エラーが発生しました");
     }
   };
 
@@ -154,6 +168,7 @@ export default function LoginPage() {
             キャンセル
           </Link>
         </div>
+        {signUpError && <p className={styles.inputError}>{signUpError}</p>}
       </form>
     </MainContent>
   );
