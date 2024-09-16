@@ -145,6 +145,28 @@ describe("users rules", () => {
           });
         });
       });
+
+      describe("invalid data format or value", () => {
+        describe("name is empty", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, name: "" }));
+          });
+        });
+
+        describe("name is over 100 length", () => {
+          it("should fail to create", async () => {
+            await assertFails(
+              subject({ ...validData, name: Array(101).fill("a") }),
+            );
+          });
+        });
+
+        describe("birthDay is invalid date", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, birthDay: "aaa" }));
+          });
+        });
+      });
     });
   });
 });
