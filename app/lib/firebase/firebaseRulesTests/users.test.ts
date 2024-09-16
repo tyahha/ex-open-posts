@@ -34,10 +34,8 @@ describe("users rules", () => {
     } satisfies RawUser;
 
     const userId = "valid-user-id";
-    const getAuthenticatedFirestore = async () =>
-      testEnv
-        .authenticatedContext(userId, { email_verified: true })
-        .firestore();
+    const getAuthenticatedFirestore = async (id: string = userId) =>
+      testEnv.authenticatedContext(id, { email_verified: true }).firestore();
 
     describe("with valid data", () => {
       describe("un authenticated", () => {
@@ -166,6 +164,23 @@ describe("users rules", () => {
             await assertFails(subject({ ...validData, birthDay: "aaa" }));
           });
         });
+      });
+    });
+
+    describe("create other user's data", () => {
+      const subject = async () => {
+        const anotherUserId = "another-user-id";
+        await getAuthenticatedFirestore(anotherUserId);
+
+        const docRef = doc(
+          await getAuthenticatedFirestore(),
+          `/users/${anotherUserId}`,
+        );
+        await setDoc(docRef, validData);
+      };
+
+      it("should fail to create", async () => {
+        await assertFails(subject());
       });
     });
   });
