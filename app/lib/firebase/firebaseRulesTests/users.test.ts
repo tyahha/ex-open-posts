@@ -18,6 +18,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  await testEnv.clearFirestore();
+});
+
+afterAll(async () => {
   await testEnv.cleanup();
 });
 
@@ -28,6 +32,12 @@ describe("users rules", () => {
       birthDay: "1992-03-05",
       gender: GENDER.MALE,
     } satisfies RawUser;
+
+    const userId = "valid-user-id";
+    const getAuthenticatedFirestore = async () =>
+      testEnv
+        .authenticatedContext(userId, { email_verified: true })
+        .firestore();
 
     describe("with valid data", () => {
       describe("un authenticated", () => {
@@ -43,20 +53,36 @@ describe("users rules", () => {
       });
 
       describe("authenticated", () => {
-        const subject = async (data: RawUser = validData) => {
-          const userId = "valid-user-id";
-          const firestore = testEnv.authenticatedContext(userId).firestore();
-          const docRef = await doc(firestore, `/users/${userId}`);
-          return setDoc(docRef, data);
-        };
+        describe("have not verified email", () => {
+          const subject = async (data: RawUser = validData) => {
+            const userId = "valid-user-id";
+            const firestore = testEnv.authenticatedContext(userId).firestore();
+            const docRef = await doc(firestore, `/users/${userId}`);
+            return setDoc(docRef, data);
+          };
 
-        it("should success to create", async () => {
-          await assertSucceeds(subject());
+          it("should fail to create", async () => {
+            await assertFails(subject());
+          });
         });
 
-        describe.each(Object.values(GENDER))("gender %s", (gender) => {
+        describe("have verified email", () => {
+          const subject = async (data: RawUser = validData) => {
+            const docRef = doc(
+              await getAuthenticatedFirestore(),
+              `/users/${userId}`,
+            );
+            return setDoc(docRef, data);
+          };
+
           it("should success to create", async () => {
-            await assertSucceeds(subject({ ...validData, gender }));
+            await assertSucceeds(subject());
+          });
+
+          describe.each(Object.values(GENDER))("gender %s", (gender) => {
+            it("should success to create", async () => {
+              await assertSucceeds(subject({ ...validData, gender }));
+            });
           });
         });
       });
@@ -64,9 +90,10 @@ describe("users rules", () => {
 
     describe("with invalid data", () => {
       const subject = async (data: object) => {
-        const userId = "valid-user-id";
-        const firestore = testEnv.authenticatedContext(userId).firestore();
-        const docRef = await doc(firestore, `/users/${userId}`);
+        const docRef = doc(
+          await getAuthenticatedFirestore(),
+          `/users/${userId}`,
+        );
         return setDoc(docRef, data);
       };
 
