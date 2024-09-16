@@ -1,5 +1,6 @@
 import styles from "./page.module.css";
 import clsx from "clsx";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -10,12 +11,12 @@ export default function Home() {
           ユーザー同士がテキストを共有しあえるサービスです
         </p>
         <div className={styles.buttonBox}>
-          <button className={clsx(styles.button, styles.login)}>
+          <Link href="/login" className={clsx(styles.button, styles.login)}>
             ログイン
-          </button>
-          <button className={clsx(styles.button, styles.signUp)}>
+          </Link>
+          <Link href="/sign-up" className={clsx(styles.button, styles.signUp)}>
             新規登録
-          </button>
+          </Link>
         </div>
       </div>
     </main>
