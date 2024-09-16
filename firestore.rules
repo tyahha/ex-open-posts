@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read: if false;
+      allow read: if isLoggedIn();
       allow write: if isLoggedIn() && request.auth.uid == userId && isValidUserData(request.resource.data);
 
         function isValidUserData(data) {

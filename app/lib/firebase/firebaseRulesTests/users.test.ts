@@ -4,7 +4,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, setDoc } from "@firebase/firestore";
+import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { GENDER, RawUser } from "@/app/lib/firebase/types";
 import { beforeEach } from "node:test";
 
@@ -26,14 +26,14 @@ afterAll(async () => {
 });
 
 describe("users rules", () => {
-  describe("create", () => {
-    const validData = {
-      name: "dummy-name",
-      birthDay: "1992-03-05",
-      gender: GENDER.MALE,
-    } satisfies RawUser;
+  const userId = "valid-user-id";
+  const validData = {
+    name: "dummy-name",
+    birthDay: "1992-03-05",
+    gender: GENDER.MALE,
+  } satisfies RawUser;
 
-    const userId = "valid-user-id";
+  describe("create", () => {
     const getAuthenticatedFirestore = async (id: string = userId) =>
       testEnv.authenticatedContext(id, { email_verified: true }).firestore();
 
@@ -182,6 +182,46 @@ describe("users rules", () => {
       it("should fail to create", async () => {
         await assertFails(subject());
       });
+    });
+  });
+
+  describe("read", () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        const firestore = ctx.firestore();
+        const docRef = doc(firestore, `/users/${userId}`);
+        await setDoc(docRef, validData);
+      });
+    });
+
+    it("should fail without authentication", async () => {
+      const firestore = testEnv.unauthenticatedContext().firestore();
+      const docRef = doc(firestore, `/users/${userId}`);
+      await assertFails(getDoc(docRef));
+    });
+
+    it("should fail with user with unverified email", async () => {
+      const firestore = testEnv.authenticatedContext(userId).firestore();
+      const docRef = doc(firestore, `/users/${userId}`);
+      await assertFails(getDoc(docRef));
+    });
+
+    it("should success with user with verified email", async () => {
+      const firestore = testEnv
+        .authenticatedContext(userId, { email_verified: true })
+        .firestore();
+      const docRef = doc(firestore, `/users/${userId}`);
+      const data = (await getDoc(docRef)).data();
+      expect(data).toEqual(validData);
+    });
+
+    it("should success to read another user data with user with verified email", async () => {
+      const firestore = testEnv
+        .authenticatedContext("another-user-id", { email_verified: true })
+        .firestore();
+      const docRef = doc(firestore, `/users/${userId}`);
+      const data = (await getDoc(docRef)).data();
+      expect(data).toEqual(validData);
     });
   });
 });
