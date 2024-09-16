@@ -1,0 +1,29 @@
+.content {
+  border-radius: 16px;
+  width: 720px;
+  background-color: #00CCDD;
+  margin: 16px;
+  padding: 16px;
+}
+
+.button {
+  display: block;
+  cursor: pointer;
+  font-size: 24px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.login {
+    background-color: #FFF7F7;
+  }
+
+  &.signUp {
+    background-color: #1230AE;
+    color: white;
+  }
+}
