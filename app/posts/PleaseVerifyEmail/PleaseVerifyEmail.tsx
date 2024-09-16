@@ -1,6 +1,7 @@
 import commonStyles from "@/app/ui/common.module.css";
-import { sendEmailVerification, User } from "@firebase/auth";
+import { User } from "@firebase/auth";
 import { useRouter } from "next/navigation";
+import { sendEmailVerification } from "@/app/lib/auth";
 
 type Props = {
   firebaseUser: User;

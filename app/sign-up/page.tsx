@@ -8,11 +8,9 @@ import { MainContent } from "@/app/ui/MainContent";
 import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import { FormEventHandler, useState } from "react";
 import { z, typeToFlattenedError } from "zod";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "@firebase/auth";
+import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { useRouter } from "next/navigation";
+import { sendEmailVerification } from "@/app/lib/auth";
 
 const SignUpFormSchema = z
   .object({
@@ -76,9 +74,7 @@ export default function LoginPage() {
         email,
         password,
       );
-      await sendEmailVerification(userCredential.user, {
-        url: `${location.origin}/posts`,
-      });
+      await sendEmailVerification(userCredential.user);
 
       router.replace("/auth/sent-email");
     } catch (e) {
