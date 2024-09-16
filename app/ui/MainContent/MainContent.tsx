@@ -1,12 +1,14 @@
 import styles from "./MainContent.module.css";
+import clsx from "clsx";
 
 type Props = {
   children: React.ReactNode;
+  className?: string;
 };
 
-export const MainContent = ({ children }: Props) => {
+export const MainContent = ({ children, className }: Props) => {
   return (
-    <main className={styles.main}>
+    <main className={clsx(styles.main, className)}>
       <div className={styles.content}>{children}</div>
     </main>
   );
