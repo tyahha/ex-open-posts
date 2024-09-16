@@ -4,6 +4,12 @@ import { typeToFlattenedError, z } from "zod";
 import { GENDER } from "@/app/lib/users";
 import commonStyles from "@/app/ui/common.module.css";
 import clsx from "clsx";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from "react-datepicker";
+import { ja } from "date-fns/locale/ja";
+import { format, parse } from "date-fns";
+registerLocale("ja", ja);
 
 const RegisterProfileFormSchema = z.object({
   name: z
@@ -84,13 +90,19 @@ export const PleaseRegisterProfile = () => {
           誕生日
         </label>
         <div className={formStyles.inputAndError}>
-          <input
+          <DatePicker
+            selected={parse(birthDay || "1990-01-01", "yyyy-MM-dd", new Date())}
+            onChange={(date) => {
+              if (!date) return;
+              setBirthDay(format(date, "yyyy-MM-dd"));
+            }}
             id="birthDay"
-            type="text"
-            placeholder="誕生日"
             className={formStyles.textInput}
-            value={birthDay}
-            onChange={(e) => setBirthDay(e.target.value)}
+            locale="ja"
+            dateFormat="yyyy年MM月dd日"
+            maxDate={new Date()}
+            showYearDropdown
+            showMonthDropdown
           />
           {fieldErrors?.birthDay?.map((error) => (
             <p key={error} className={formStyles.inputError}>
