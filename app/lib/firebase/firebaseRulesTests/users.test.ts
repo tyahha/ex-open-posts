@@ -86,6 +86,12 @@ describe("users rules", () => {
           });
         });
       });
+
+      describe("with extra data", () => {
+        it("should fail to create", async () => {
+          await assertFails(subject({ ...validData, extraKey: "extra" }));
+        });
+      });
     });
   });
 });
