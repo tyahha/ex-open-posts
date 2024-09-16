@@ -34,7 +34,12 @@ export default function PostsPage() {
   return (
     <>
       <Header />
-      <MainContent className={clsx(styles.posts, styles.main)}>
+      <MainContent
+        className={clsx(styles.posts, styles.main)}
+        contentClassName={clsx(styles.posts, {
+          [styles.postable]: currentUser.authState === AUTH_STATE.LOGGED_IN,
+        })}
+      >
         {currentUser.authState === AUTH_STATE.HAS_NOT_VERIFIED_EMAIL && (
           <PleaseVerifyEmail firebaseUser={currentUser.firebaseUser} />
         )}

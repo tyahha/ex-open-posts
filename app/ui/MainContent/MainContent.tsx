@@ -4,12 +4,17 @@ import clsx from "clsx";
 type Props = {
   children: React.ReactNode;
   className?: string;
+  contentClassName?: string;
 };
 
-export const MainContent = ({ children, className }: Props) => {
+export const MainContent = ({
+  children,
+  className,
+  contentClassName,
+}: Props) => {
   return (
     <main className={clsx(styles.main, className)}>
-      <div className={styles.content}>{children}</div>
+      <div className={clsx(styles.content, contentClassName)}>{children}</div>
     </main>
   );
 };

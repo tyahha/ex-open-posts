@@ -1,0 +1,48 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.posts {
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 16px;
+  padding: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.post {
+
+}
+
+.postMeta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.postedBy {
+  color: #252525;
+  font-size: 14px;
+}
+
+.postedAt {
+  color: #707070;
+  font-size: 12px;
+}
+
+.postedText {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.textInput {
+  border-radius: 8px;
+  padding: 8px;
+  height: calc(4rem + 24px);
+  resize: none;
+}
