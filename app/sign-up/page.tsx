@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./page.module.css";
 import clsx from "clsx";
 import { MainContent } from "@/app/ui/MainContent";
+import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
 
 export default function LoginPage() {
+  // TODO: あとで削除する
+  console.log("auth", getFirestoreAuth().name);
   return (
     <MainContent>
       <h1 className={styles.label}>EX Open Posts</h1>

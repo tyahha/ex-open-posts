@@ -1,3 +1,5 @@
+"use client";
+
 import commonStyles from "./ui/common.module.css";
 import styles from "./page.module.css";
 import clsx from "clsx";
