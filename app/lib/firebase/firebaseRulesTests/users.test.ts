@@ -92,6 +92,26 @@ describe("users rules", () => {
           await assertFails(subject({ ...validData, extraKey: "extra" }));
         });
       });
+
+      describe("invalid data type", () => {
+        describe("name", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, name: 111 }));
+          });
+        });
+
+        describe("birthDay", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, birthDay: 222 }));
+          });
+        });
+
+        describe("gender", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, gender: "VALID" }));
+          });
+        });
+      });
     });
   });
 });

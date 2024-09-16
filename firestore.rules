@@ -9,7 +9,10 @@ service cloud.firestore {
         function isValidUserData(data) {
           let keys = ["name", "birthDay", "gender"];
           return data.keys().hasAll(keys)
-            && data.keys().hasOnly(keys);
+            && data.keys().hasOnly(keys)
+            && data.name is string
+            && data.birthDay is string
+            && data.gender in ["MALE", "FEMALE", "OTHER"]
         }
     }
   }
