@@ -5,5 +5,5 @@ import {
 
 export const sendEmailVerification = (user: User) =>
   sendEmailVerificationRaw(user, {
-    url: `${location.origin}/posts`,
+    url: `${location.origin}/login`,
   });
