@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import {
   AUTH_STATE,
   AuthState,
-  getCurrentUserWithAuthState,
+  getCurrentUser,
   User,
+  CurrentUser,
 } from "@/app/lib/users";
 import { useRouter } from "next/navigation";
 import { MainContent } from "@/app/ui/MainContent";
@@ -17,23 +18,23 @@ import { Posts } from "@/app/posts/Posts";
 export default function PostsPage() {
   const router = useRouter();
 
-  const [authState, setAuthState] = useState<AuthState>(AUTH_STATE.LOGGED_OUT);
-  const [currentUser, setCurrentUser] = useState<User | undefined>();
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+    authState: AUTH_STATE.LOGGED_OUT,
+  });
 
   useEffect(() => {
     if (currentUser) return;
 
-    getCurrentUserWithAuthState().then((userWithAuthState) => {
-      const authState = userWithAuthState.authState;
-      if (authState === AUTH_STATE.LOGGED_OUT) {
+    getCurrentUser().then((authStateWithUser) => {
+      if (authStateWithUser.authState === AUTH_STATE.LOGGED_OUT) {
         router.replace("/");
         return;
       }
 
-      setAuthState(authState);
+      setCurrentUser(currentUser);
 
-      if (authState === AUTH_STATE.LOGGED_IN) {
-        setCurrentUser(userWithAuthState.user);
+      if (currentUser === AUTH_STATE.LOGGED_IN) {
+        setCurrentUser(authStateWithUser);
       }
     });
   }, [currentUser, router]);
@@ -42,13 +43,13 @@ export default function PostsPage() {
     <>
       <Header />
       <MainContent>
-        {authState === AUTH_STATE.HAS_NOT_VERIFIED_EMAIL && (
+        {currentUser.authState === AUTH_STATE.HAS_NOT_VERIFIED_EMAIL && (
           <PleaseVerifyEmail />
         )}
-        {authState === AUTH_STATE.HAS_NOT_REGISTERED_PROFILE && (
+        {currentUser.authState === AUTH_STATE.HAS_NOT_REGISTERED_PROFILE && (
           <PleaseRegisterProfile />
         )}
-        {authState === AUTH_STATE.LOGGED_IN && <Posts />}
+        {currentUser.authState === AUTH_STATE.LOGGED_IN && <Posts />}
       </MainContent>
     </>
   );

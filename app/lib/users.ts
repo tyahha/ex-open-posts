@@ -4,6 +4,7 @@ import {
 } from "@/app/lib/firebase/firebaseConfig";
 import { doc, getDoc } from "@firebase/firestore";
 import { RawUser } from "@/app/lib/firebase/types";
+import { User as FirebaseUser } from "firebase/auth";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -29,49 +30,55 @@ export const AUTH_STATE = <const>{
 
 export type AuthState = (typeof AUTH_STATE)[keyof typeof AUTH_STATE];
 
-export type UserWithLoginState =
+export type CurrentUser =
+  | {
+      authState: typeof AUTH_STATE.LOGGED_OUT;
+    }
   | {
       authState:
-        | typeof AUTH_STATE.LOGGED_OUT
         | typeof AUTH_STATE.HAS_NOT_VERIFIED_EMAIL
         | typeof AUTH_STATE.HAS_NOT_REGISTERED_PROFILE;
+      firebaseUser: FirebaseUser;
     }
   | {
       authState: typeof AUTH_STATE.LOGGED_IN;
+      firebaseUser: FirebaseUser;
       user: User;
     };
 
-export const getCurrentUserWithAuthState =
-  async (): Promise<UserWithLoginState> => {
-    const auth = getFirebaseAuth();
-    if (!auth.currentUser) {
-      return {
-        authState: AUTH_STATE.LOGGED_OUT,
-      };
-    }
-
-    if (!auth.currentUser.emailVerified) {
-      return {
-        authState: AUTH_STATE.HAS_NOT_VERIFIED_EMAIL,
-      };
-    }
-
-    const firestore = getFirestore();
-
-    const docRef = doc(firestore, `/users/${auth.currentUser.uid}`);
-    const snapshot = await getDoc(docRef);
-    if (!snapshot.exists()) {
-      return {
-        authState: AUTH_STATE.HAS_NOT_REGISTERED_PROFILE,
-      };
-    }
-
-    const rawUser = snapshot.data() as RawUser;
+export const getCurrentUser = async (): Promise<CurrentUser> => {
+  const auth = getFirebaseAuth();
+  if (!auth.currentUser) {
     return {
-      authState: AUTH_STATE.LOGGED_IN,
-      user: {
-        id: docRef.id,
-        ...rawUser,
-      },
+      authState: AUTH_STATE.LOGGED_OUT,
     };
+  }
+
+  if (!auth.currentUser.emailVerified) {
+    return {
+      authState: AUTH_STATE.HAS_NOT_VERIFIED_EMAIL,
+      firebaseUser: auth.currentUser,
+    };
+  }
+
+  const firestore = getFirestore();
+
+  const docRef = doc(firestore, `/users/${auth.currentUser.uid}`);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) {
+    return {
+      authState: AUTH_STATE.HAS_NOT_REGISTERED_PROFILE,
+      firebaseUser: auth.currentUser,
+    };
+  }
+
+  const rawUser = snapshot.data() as RawUser;
+  return {
+    authState: AUTH_STATE.LOGGED_IN,
+    firebaseUser: auth.currentUser,
+    user: {
+      id: docRef.id,
+      ...rawUser,
+    },
   };
+};
