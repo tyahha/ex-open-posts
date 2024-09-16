@@ -12,6 +12,7 @@
 
 .inputWrapper {
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 16px;
   gap: 16px;
   padding: 0 8px;
