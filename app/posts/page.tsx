@@ -4,6 +4,8 @@ import styles from "./page.module.css";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { useRouter } from "next/navigation";
 
 export default function PostsPage() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -25,6 +27,14 @@ export default function PostsPage() {
     };
   }, []);
 
+  const router = useRouter();
+
+  const logout = async () => {
+    const auth = getFirestoreAuth();
+    await auth.signOut();
+    router.replace("/");
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -45,7 +55,9 @@ export default function PostsPage() {
             [styles.visible]: isOpenMenu,
           })}
         >
-          <div className={styles.menuItem}>ログアウト</div>
+          <div className={styles.menuItem} onClick={logout}>
+            ログアウト
+          </div>
         </div>
       </header>
     </>
