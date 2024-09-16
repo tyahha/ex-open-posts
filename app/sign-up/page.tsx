@@ -6,15 +6,62 @@ import styles from "./page.module.css";
 import clsx from "clsx";
 import { MainContent } from "@/app/ui/MainContent";
 import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
+import { FormEventHandler, useState } from "react";
+import { z } from "zod";
+
+const SignUpFormSchema = z
+  .object({
+    email: z.string().email("メールアドレスを入力してください"),
+    password: z
+      .string()
+      .min(8, "パスワードは8文字以上で入力してください")
+      .regex(
+        /^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i,
+        "パスワードは半角英数字混合で入力してください",
+      ),
+    reInputPassword: z.string().min(1, "確認用のパスワードを入力してください"),
+  })
+  .superRefine(({ password, reInputPassword }, ctx) => {
+    if (password !== reInputPassword) {
+      ctx.addIssue({
+        path: ["reInputPassword"],
+        code: "custom",
+        message: "パスワードが一致しません",
+      });
+    }
+  });
 
 export default function LoginPage() {
   // TODO: あとで削除する
   console.log("auth", getFirestoreAuth().name);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [reInputPassword, setReInputPassword] = useState("");
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    const result = SignUpFormSchema.safeParse({
+      email,
+      password,
+      reInputPassword,
+    });
+
+    if (result.error) {
+      // TODO: エラーをフィードバックする
+      console.log("入力エラー", result.error.flatten().fieldErrors);
+    } else {
+      // TODO: firebase authenticationで登録処理をする
+      console.log("入力成功", result);
+    }
+  };
+
   return (
     <MainContent>
       <h1 className={styles.label}>EX Open Posts</h1>
       <p className={styles.description}>新規登録をしましょう！</p>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className={styles.inputWrapper}>
           <label htmlFor="email" className={styles.inputLabel}>
             メールアドレス
@@ -25,6 +72,8 @@ export default function LoginPage() {
             placeholder="メールアドレス"
             required
             className={styles.textInput}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className={styles.inputWrapper}>
@@ -37,6 +86,8 @@ export default function LoginPage() {
             placeholder="パスワード"
             required
             className={styles.textInput}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className={styles.inputWrapper}>
@@ -49,12 +100,14 @@ export default function LoginPage() {
             placeholder="パスワード(再入力)"
             required
             className={styles.textInput}
+            value={reInputPassword}
+            onChange={(e) => setReInputPassword(e.target.value)}
           />
         </div>
         <div className={commonStyles.buttonBox}>
-          <Link href="/" className={commonStyles.button}>
+          <button type="submit" className={commonStyles.button}>
             新規登録
-          </Link>
+          </button>
           <Link
             href="/"
             className={clsx(commonStyles.button, commonStyles.secondary)}
