@@ -61,3 +61,22 @@
     opacity: 0.8;
   }
 }
+
+.radioGroupWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.radioWrapper {
+  display: flex;
+}
+
+.radioInput {
+  cursor: pointer;
+}
+
+.radioLabel {
+  padding-left: 8px;
+  cursor: pointer;
+}
