@@ -1,0 +1,53 @@
+.header {
+  height: 48px;
+  background-color: #6439FF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.appName {
+  color: white;
+  font-size: 32px;
+  line-height: 48px;
+}
+
+.profileMenuButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  border-radius: 50%;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.menuBody {
+  visibility: hidden;
+  position: fixed;
+  top: 40px;
+  right: 4px;
+  background-color: white;
+  border-radius: 4px;
+  width: 128px;
+  transition: visibility 0.2s;
+  overflow: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.menuItem {
+  cursor: pointer;
+  padding: 4px 8px;
+
+  &:hover {
+    background-color: #eaeaea;
+  }
+}
