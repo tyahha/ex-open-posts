@@ -11,7 +11,7 @@ export default function Home() {
       <p className={styles.description}>
         ユーザー同士がテキストを共有しあえるサービスです
       </p>
-      <div className={styles.buttonBox}>
+      <div className={commonStyles.buttonBox}>
         <Link
           href="/login"
           className={clsx(commonStyles.button, commonStyles.secondary)}
