@@ -13,7 +13,7 @@
 .inputWrapper {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-top: 16px;
   gap: 16px;
   padding: 0 8px;
 }
@@ -28,4 +28,10 @@
   font-size: 20px;
   flex-grow: 1;
   padding: 4px 8px;
+}
+
+.inputError {
+  padding: 0 16px;
+  color: red;
+  font-size: 12px;
 }

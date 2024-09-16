@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { MainContent } from "@/app/ui/MainContent";
 import { getFirestoreAuth } from "@/app/lib/firebase/firebaseConfig";
 import { FormEventHandler, useState } from "react";
-import { z } from "zod";
+import { z, typeToFlattenedError } from "zod";
 
 const SignUpFormSchema = z
   .object({
@@ -38,9 +38,19 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [reInputPassword, setReInputPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<
+    | typeToFlattenedError<{
+        email: string;
+        password: string;
+        reInputPassword: string;
+      }>["fieldErrors"]
+    | undefined
+  >();
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
+    setFieldErrors(undefined);
 
     const result = SignUpFormSchema.safeParse({
       email,
@@ -49,8 +59,7 @@ export default function LoginPage() {
     });
 
     if (result.error) {
-      // TODO: エラーをフィードバックする
-      console.log("入力エラー", result.error.flatten().fieldErrors);
+      setFieldErrors(result.error.flatten().fieldErrors);
     } else {
       // TODO: firebase authenticationで登録処理をする
       console.log("入力成功", result);
@@ -70,12 +79,16 @@ export default function LoginPage() {
             id="email"
             type="email"
             placeholder="メールアドレス"
-            required
             className={styles.textInput}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
+        {fieldErrors?.email?.map((error) => (
+          <p key={error} className={styles.inputError}>
+            {error}
+          </p>
+        ))}
         <div className={styles.inputWrapper}>
           <label htmlFor="password" className={styles.inputLabel}>
             パスワード
@@ -84,12 +97,16 @@ export default function LoginPage() {
             id="password"
             type="password"
             placeholder="パスワード"
-            required
             className={styles.textInput}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {fieldErrors?.password?.map((error) => (
+          <p key={error} className={styles.inputError}>
+            {error}
+          </p>
+        ))}
         <div className={styles.inputWrapper}>
           <label htmlFor="reinputPassword" className={styles.inputLabel}>
             パスワード(再入力)
@@ -98,12 +115,16 @@ export default function LoginPage() {
             id="reinputPassword"
             type="password"
             placeholder="パスワード(再入力)"
-            required
             className={styles.textInput}
             value={reInputPassword}
             onChange={(e) => setReInputPassword(e.target.value)}
           />
         </div>
+        {fieldErrors?.reInputPassword?.map((error) => (
+          <p key={error} className={styles.inputError}>
+            {error}
+          </p>
+        ))}
         <div className={commonStyles.buttonBox}>
           <button type="submit" className={commonStyles.button}>
             新規登録
