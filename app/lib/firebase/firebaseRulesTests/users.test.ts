@@ -23,13 +23,13 @@ beforeEach(async () => {
 
 describe("users rules", () => {
   describe("create", () => {
-    describe("with valid data", () => {
-      const validData = {
-        name: "dummy-name",
-        birthDay: "1992-03-05",
-        gender: GENDER.MALE,
-      } satisfies RawUser;
+    const validData = {
+      name: "dummy-name",
+      birthDay: "1992-03-05",
+      gender: GENDER.MALE,
+    } satisfies RawUser;
 
+    describe("with valid data", () => {
       describe("un authenticated", () => {
         const subject = async () => {
           const firestore = testEnv.unauthenticatedContext().firestore();
@@ -52,6 +52,38 @@ describe("users rules", () => {
 
         it("should success to create", async () => {
           await assertSucceeds(subject());
+        });
+      });
+    });
+
+    describe("with invalid data", () => {
+      const subject = async (data: object) => {
+        const userId = "valid-user-id";
+        const firestore = testEnv.authenticatedContext(userId).firestore();
+        const docRef = await doc(firestore, `/users/${userId}`);
+        return setDoc(docRef, data);
+      };
+
+      describe("partial data", () => {
+        describe("no name", () => {
+          it("should fail to create", async () => {
+            const { name: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
+        });
+
+        describe("no birthDay", () => {
+          it("should fail to create", async () => {
+            const { birthDay: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
+        });
+
+        describe("no gender", () => {
+          it("should fail to create", async () => {
+            const { gender: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
         });
       });
     });
