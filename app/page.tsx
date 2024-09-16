@@ -14,14 +14,11 @@ export default function Home() {
         <div className={styles.buttonBox}>
           <Link
             href="/login"
-            className={clsx(commonStyles.button, commonStyles.login)}
+            className={clsx(commonStyles.button, commonStyles.secondary)}
           >
             ログイン
           </Link>
-          <Link
-            href="/sign-up"
-            className={clsx(commonStyles.button, commonStyles.signUp)}
-          >
+          <Link href="/sign-up" className={commonStyles.button}>
             新規登録
           </Link>
         </div>
