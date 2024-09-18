@@ -72,11 +72,6 @@ export const PleaseRegisterProfile = ({
     setFieldErrors(undefined);
     setRegisterError(undefined);
 
-    let avatarPath;
-    if (avatar) {
-      avatarPath = uploadAvatar(firebaseUser.uid, avatar);
-    }
-
     const result = RegisterProfileFormSchema.safeParse({
       name,
       birthDay,
@@ -88,11 +83,14 @@ export const PleaseRegisterProfile = ({
       return;
     }
 
+    const avatarPath = avatar && (await uploadAvatar(firebaseUser.uid, avatar));
+
     try {
       const user = await registerUser(firebaseUser.uid, {
         name,
         birthDay,
         gender: gender as Gender,
+        ...(avatarPath && { avatarPath }),
       });
 
       onRegisterUser(user);
