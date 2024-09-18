@@ -1,6 +1,7 @@
 import { User as FirebaseUser } from "firebase/auth";
+import Image from "next/image";
 import formStyles from "@/app/ui/form.module.css";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler, useMemo, useState } from "react";
 import { typeToFlattenedError, z } from "zod";
 import { GENDER, registerUser, User, Gender } from "@/app/lib/users";
 import commonStyles from "@/app/ui/common.module.css";
@@ -10,6 +11,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from "react-datepicker";
 import { ja } from "date-fns/locale/ja";
 import { format, parse } from "date-fns";
+import styles from "./PleaseRegisterProfile.module.css";
+
 registerLocale("ja", ja);
 
 const RegisterProfileFormSchema = z.object({
@@ -37,6 +40,11 @@ export const PleaseRegisterProfile = ({
   firebaseUser,
   onRegisterUser,
 }: Props) => {
+  const [avatar, setAvatar] = useState<File | undefined>();
+  const avatarUrl = useMemo(
+    () => (avatar ? URL.createObjectURL(avatar) : "/anonymous.png"),
+    [avatar],
+  );
   const [name, setName] = useState("");
   const [birthDay, setBirthDay] = useState("1990-01-01");
   const [gender, setGender] = useState("");
@@ -84,6 +92,28 @@ export const PleaseRegisterProfile = ({
 
   return (
     <form onSubmit={handleSubmit}>
+      <div className={styles.avatarWrapper}>
+        <label htmlFor="avatar" className={styles.avatarLabel}>
+          <Image
+            src={avatarUrl}
+            width={128}
+            height={128}
+            alt="プロフィール画像"
+            className={styles.avatar}
+          />
+        </label>
+        <input
+          id="avatar"
+          name="avatar"
+          type="file"
+          className={styles.imageSelection}
+          accept="image/png, image/jpeg, image/gif"
+          onChange={(e) => {
+            if (!e.target.files || e.target.files.length <= 0) return;
+            setAvatar(e.target.files[0]);
+          }}
+        />
+      </div>
       <div className={formStyles.inputWrapper}>
         <label htmlFor="name" className={formStyles.inputLabel}>
           名前(表示名)

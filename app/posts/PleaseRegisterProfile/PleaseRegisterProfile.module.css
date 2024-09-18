@@ -1,0 +1,22 @@
+ .avatarWrapper {
+   display: flex;
+   justify-content: center;
+ }
+ 
+ .avatarLabel {
+   cursor: pointer;
+   transition: opacity 0.2s;
+
+   &:hover {
+     opacity: 0.8;
+   }
+ }
+
+ .avatar {
+   object-fit: cover;
+   border-radius: 50%;
+ }
+
+ .imageSelection {
+   display: none;
+ }
