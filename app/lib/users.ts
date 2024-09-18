@@ -174,17 +174,19 @@ const rawToUser = (snapshot: DocumentSnapshot): User => {
   };
 };
 
-export const useGetPostedBy = () => {
+export const useGetPostedByUser = () => {
   const users = useUsers();
 
   return useCallback(
     (post: Post) => {
-      const user = users.find((u) => u.id === post.createdBy);
-      return user ? user.name : "不明なユーザー";
+      return users.find((u) => u.id === post.createdBy);
     },
     [users],
   );
 };
+
+export const getUserName = (user: User | undefined) =>
+  user ? user.name : "不明なユーザー";
 
 export const uploadAvatar = async (
   userId: string,

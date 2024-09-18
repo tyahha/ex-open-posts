@@ -3,8 +3,13 @@ import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
 import { addPost, deletePost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
-import { ANONYMOUS_AVATAR, useGetPostedBy } from "@/app/lib/users";
+import {
+  ANONYMOUS_AVATAR,
+  getUserName,
+  useGetPostedByUser,
+} from "@/app/lib/users";
 import Image from "next/image";
+import { Avatar } from "@/app/posts/Posts/Avatar";
 
 type Props = {
   currentUserId: string;
@@ -32,23 +37,18 @@ export const Posts = ({ currentUserId }: Props) => {
     setText("");
   };
 
-  const getPostedBy = useGetPostedBy();
+  const getPostedByUser = useGetPostedByUser();
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.posts} ref={postsRef}>
         {posts.map((post) => {
           const { id, text, createdAt } = post;
-          const postedBy = getPostedBy(post);
+          const user = getPostedByUser(post);
+          const postedBy = getUserName(user);
           return (
             <div key={id} className={styles.post}>
-              <Image
-                src={ANONYMOUS_AVATAR}
-                alt={`${postedBy}さんのプロフィール画像`}
-                width={48}
-                height={48}
-                className={styles.avatar}
-              />
+              <Avatar user={user} />
               <div className={styles.postContent}>
                 <div className={styles.postMeta}>
                   <div className={styles.postedBy}>{postedBy}</div>
