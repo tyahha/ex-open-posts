@@ -1,23 +1,50 @@
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
+import { useState } from "react";
+import { Post } from "@/app/lib/posts";
+import { registerLocale } from "react-datepicker";
+import { ja } from "date-fns/locale/ja";
+import { format } from "date-fns";
+registerLocale("ja", ja);
 
 export const Posts = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  const send = () => {
+    setPosts((prev) => [
+      ...prev,
+      {
+        text: "初めての投稿のテスト。\n開業文字はそのまま開業してほしい。",
+        createdBy: "山田 太郎",
+        createdAt: new Date().getTime(),
+      },
+    ]);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.posts}>
-        <div className={styles.post}>
-          <div className={styles.postMeta}>
-            <div className={styles.postedBy}>山田 太郎</div>
-            <div className={styles.postedAt}>2024年9月17日 12:34:50</div>
-          </div>
-          <div className={styles.postedText}>
-            {"初めての投稿のテスト。\n開業文字はそのまま開業してほしい。"}
-          </div>
-        </div>
+        {posts.map(({ text, createdBy, createdAt }, i) => {
+          return (
+            <div key={i} className={styles.post}>
+              <div className={styles.postMeta}>
+                <div className={styles.postedBy}>{createdBy}</div>
+                <div className={styles.postedAt}>
+                  {format(createdAt, "yyyy年MM月dd日 hh:mm:ss")}
+                </div>
+              </div>
+              <div className={styles.postedText}>{text}</div>
+            </div>
+          );
+        })}
       </div>
-      <textarea className={styles.textInput} />
-      <div className={commonStyles.buttonBox}>
-        <button className={commonStyles.button}>送信</button>
+      <div className={styles.control}>
+        <textarea className={styles.textInput} />
+        <div className={commonStyles.buttonBox}>
+          <button className={commonStyles.button} onClick={send}>
+            送信
+          </button>
+        </div>
       </div>
     </div>
   );

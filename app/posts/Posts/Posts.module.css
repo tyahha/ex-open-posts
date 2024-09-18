@@ -12,11 +12,21 @@
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  overflow-y: auto;
 }
 
 .post {
+  padding-bottom: 8px;
+  margin: 4px;
+  border-bottom: solid 1px #a5a5a5;
 
+  &:first-child {
+    margin-top: auto;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .postMeta {
@@ -35,6 +45,10 @@
   font-size: 12px;
 }
 
+.control {
+  flex-shrink: 0;
+}
+
 .postedText {
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -45,4 +59,5 @@
   padding: 8px;
   height: calc(4rem + 24px);
   resize: none;
+  width: 100%;
 }
