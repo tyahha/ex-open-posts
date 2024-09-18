@@ -2,10 +2,7 @@ import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
 import { Post } from "@/app/lib/posts";
-import { registerLocale } from "react-datepicker";
-import { ja } from "date-fns/locale/ja";
 import { format } from "date-fns";
-registerLocale("ja", ja);
 
 export const Posts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -37,7 +34,7 @@ export const Posts = () => {
               <div className={styles.postMeta}>
                 <div className={styles.postedBy}>{createdBy}</div>
                 <div className={styles.postedAt}>
-                  {format(createdAt, "yyyy年MM月dd日 hh:mm:ss")}
+                  {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
                 </div>
               </div>
               <div className={styles.postedText}>{text}</div>
