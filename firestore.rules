@@ -19,5 +19,10 @@ service cloud.firestore {
           && data.gender in ["MALE", "FEMALE", "OTHER"]
       }
     }
+
+    match /open-posts/{postId} {
+      allow read: if isLoggedIn();
+      allow write: if isLoggedIn();
+    }
   }
 }
