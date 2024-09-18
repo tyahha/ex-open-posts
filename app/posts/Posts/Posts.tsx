@@ -45,6 +45,9 @@ export const Posts = ({ currentUserId }: Props) => {
                 <div className={styles.postedAt}>
                   {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
                 </div>
+                {currentUserId === post.createdBy && (
+                  <button className={styles.deletePost}>削除</button>
+                )}
               </div>
               <div className={styles.postedText}>{text}</div>
             </div>
