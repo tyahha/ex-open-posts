@@ -4,7 +4,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, setDoc } from "@firebase/firestore";
+import { doc, setDoc, Timestamp } from "@firebase/firestore";
 import { SeedPost } from "@/app/lib/firebase/types";
 import { serverTimestamp } from "@firebase/firestore";
 
@@ -133,6 +133,38 @@ describe("users rules", () => {
         describe("gender", () => {
           it("should fail to create", async () => {
             await assertFails(subject({ ...validData, createdAt: 333 }));
+          });
+        });
+      });
+
+      describe("invalid data format or value", () => {
+        describe("text is empty", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, text: "" }));
+          });
+        });
+
+        describe("text is over 1000 length", () => {
+          it("should fail to create", async () => {
+            await assertFails(
+              subject({ ...validData, text: Array(1001).fill("a") }),
+            );
+          });
+        });
+
+        describe("createdBy is another user id", () => {
+          it("should fail to create", async () => {
+            await assertFails(
+              subject({ ...validData, createdBy: "another-user-id" }),
+            );
+          });
+        });
+
+        describe("createdAt is not request time", () => {
+          it("should fail to create", async () => {
+            await assertFails(
+              subject({ ...validData, createdAt: Timestamp.fromMillis(10) }),
+            );
           });
         });
       });

@@ -28,9 +28,9 @@ service cloud.firestore {
         let keys = ["text", "createdBy", "createdAt"];
         return data.keys().hasAll(keys)
           && data.keys().hasOnly(keys)
-          && data.text is string
-          && data.createdBy is string
-          && data.createdAt is timestamp;
+          && data.text is string && data.text.size() > 0 && data.text.size() <= 1000
+          && data.createdBy == request.auth.uid
+          && data.createdAt == request.time;
       }
     }
   }
