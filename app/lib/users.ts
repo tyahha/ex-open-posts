@@ -1,6 +1,7 @@
 import {
   getFirebaseAuth,
   getFirestore,
+  getStorage,
 } from "@/app/lib/firebase/firebaseConfig";
 import {
   collection,
@@ -8,14 +9,14 @@ import {
   DocumentSnapshot,
   getDoc,
   onSnapshot,
-  orderBy,
   query,
   setDoc,
 } from "@firebase/firestore";
-import { RawPost, RawUser } from "@/app/lib/firebase/types";
+import { RawUser } from "@/app/lib/firebase/types";
 import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { useCallback, useEffect, useState } from "react";
 import { Post } from "@/app/lib/posts";
+import { ref, uploadBytes } from "@firebase/storage";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -180,4 +181,15 @@ export const useGetPostedBy = () => {
     },
     [users],
   );
+};
+
+export const uploadAvatar = async (
+  userId: string,
+  file: File,
+): Promise<string> => {
+  const storage = getStorage();
+  const ext = file.name.split(".").pop();
+  const path = `avatars/${userId}/${userId}.${ext}`;
+  await uploadBytes(ref(storage, path), file);
+  return path;
 };

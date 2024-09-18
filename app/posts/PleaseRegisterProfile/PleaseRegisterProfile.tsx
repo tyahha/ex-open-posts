@@ -3,7 +3,13 @@ import Image from "next/image";
 import formStyles from "@/app/ui/form.module.css";
 import { FormEventHandler, useMemo, useState } from "react";
 import { typeToFlattenedError, z } from "zod";
-import { GENDER, registerUser, User, Gender } from "@/app/lib/users";
+import {
+  GENDER,
+  registerUser,
+  User,
+  Gender,
+  uploadAvatar,
+} from "@/app/lib/users";
 import commonStyles from "@/app/ui/common.module.css";
 import clsx from "clsx";
 import DatePicker from "react-datepicker";
@@ -65,6 +71,11 @@ export const PleaseRegisterProfile = ({
 
     setFieldErrors(undefined);
     setRegisterError(undefined);
+
+    let avatarPath;
+    if (avatar) {
+      avatarPath = uploadAvatar(firebaseUser.uid, avatar);
+    }
 
     const result = RegisterProfileFormSchema.safeParse({
       name,
