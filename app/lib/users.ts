@@ -4,7 +4,8 @@ import {
 } from "@/app/lib/firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { RawUser } from "@/app/lib/firebase/types";
-import { User as FirebaseUser } from "firebase/auth";
+import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
+import { useEffect, useState } from "react";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -22,6 +23,7 @@ export type User = {
 };
 
 export const AUTH_STATE = <const>{
+  INITIAL: "INITIAL",
   LOGGED_OUT: "LOGGED_OUT",
   HAS_NOT_VERIFIED_EMAIL: "HAS_NOT_VERIFIED_EMAIL",
   HAS_NOT_REGISTERED_PROFILE: "HAS_NOT_REGISTERED_PROFILE",
@@ -31,6 +33,9 @@ export const AUTH_STATE = <const>{
 export type AuthState = (typeof AUTH_STATE)[keyof typeof AUTH_STATE];
 
 export type CurrentUser =
+  | {
+      authState: typeof AUTH_STATE.INITIAL;
+    }
   | {
       authState: typeof AUTH_STATE.LOGGED_OUT;
     }
@@ -46,41 +51,52 @@ export type CurrentUser =
       user: User;
     };
 
-export const getCurrentUser = async (): Promise<CurrentUser> => {
-  const auth = getFirebaseAuth();
-  if (!auth.currentUser) {
-    return {
-      authState: AUTH_STATE.LOGGED_OUT,
-    };
-  }
+export const useCurrentUser = () => {
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+    authState: AUTH_STATE.INITIAL,
+  });
 
-  if (!auth.currentUser.emailVerified) {
-    return {
-      authState: AUTH_STATE.HAS_NOT_VERIFIED_EMAIL,
-      firebaseUser: auth.currentUser,
-    };
-  }
+  useEffect(() => {
+    const auth = getFirebaseAuth();
+    onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        setCurrentUser({
+          authState: AUTH_STATE.LOGGED_OUT,
+        });
+        return;
+      }
 
-  const firestore = getFirestore();
+      if (!firebaseUser.emailVerified) {
+        setCurrentUser({
+          authState: AUTH_STATE.HAS_NOT_VERIFIED_EMAIL,
+          firebaseUser,
+        });
+      }
 
-  const docRef = doc(firestore, `/users/${auth.currentUser.uid}`);
-  const snapshot = await getDoc(docRef);
-  if (!snapshot.exists()) {
-    return {
-      authState: AUTH_STATE.HAS_NOT_REGISTERED_PROFILE,
-      firebaseUser: auth.currentUser,
-    };
-  }
+      const firestore = getFirestore();
 
-  const rawUser = snapshot.data() as RawUser;
-  return {
-    authState: AUTH_STATE.LOGGED_IN,
-    firebaseUser: auth.currentUser,
-    user: {
-      id: docRef.id,
-      ...rawUser,
-    },
-  };
+      const docRef = doc(firestore, `/users/${firebaseUser.uid}`);
+      const snapshot = await getDoc(docRef);
+      if (!snapshot.exists()) {
+        setCurrentUser({
+          authState: AUTH_STATE.HAS_NOT_REGISTERED_PROFILE,
+          firebaseUser,
+        });
+      }
+
+      const rawUser = snapshot.data() as RawUser;
+      setCurrentUser({
+        authState: AUTH_STATE.LOGGED_IN,
+        firebaseUser,
+        user: {
+          id: docRef.id,
+          ...rawUser,
+        },
+      });
+    });
+  }, []);
+
+  return [currentUser, setCurrentUser] as const;
 };
 
 export const registerUser = async (
