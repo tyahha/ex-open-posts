@@ -4,7 +4,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, Timestamp } from "@firebase/firestore";
+import { deleteDoc, doc, getDoc, setDoc, Timestamp } from "@firebase/firestore";
 import { SeedPost } from "@/app/lib/firebase/types";
 import { serverTimestamp } from "@firebase/firestore";
 
@@ -218,6 +218,51 @@ describe("users rules", () => {
           }),
         );
       });
+    });
+  });
+
+  describe("delete", () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        const firestore = ctx.firestore();
+        const docRef = doc(firestore, `/open-posts/${postId}`);
+        await setDoc(docRef, validData);
+      });
+    });
+
+    it("should fail without authentication", async () => {
+      const firestore = testEnv.unauthenticatedContext().firestore();
+      const docRef = doc(firestore, `/open-posts/${postId}`);
+      await assertFails(deleteDoc(docRef));
+    });
+
+    it("should fail with user with unverified email", async () => {
+      const firestore = testEnv.authenticatedContext(userId).firestore();
+      const docRef = doc(firestore, `/open-posts/${postId}`);
+      await assertFails(deleteDoc(docRef));
+    });
+
+    it("should success with user with verified email", async () => {
+      const firestore = testEnv
+        .authenticatedContext(userId, { email_verified: true })
+        .firestore();
+      const docRef = doc(firestore, `/open-posts/${postId}`);
+
+      const docSnapshotBefore = await getDoc(docRef);
+      expect(docSnapshotBefore.exists()).toBeTruthy();
+
+      await assertSucceeds(deleteDoc(docRef));
+
+      const docSnapshotAfter = await getDoc(docRef);
+      expect(docSnapshotAfter.exists()).toBeFalsy();
+    });
+
+    it("should fail with another user with verified email", async () => {
+      const firestore = testEnv
+        .authenticatedContext("another-user-id", { email_verified: true })
+        .firestore();
+      const docRef = doc(firestore, `/open-posts/${postId}`);
+      await assertFails(deleteDoc(docRef));
     });
   });
 });
