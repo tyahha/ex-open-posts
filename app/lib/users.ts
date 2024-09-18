@@ -16,7 +16,7 @@ import { RawUser } from "@/app/lib/firebase/types";
 import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { useCallback, useEffect, useState } from "react";
 import { Post } from "@/app/lib/posts";
-import { ref, uploadBytes } from "@firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -33,6 +33,8 @@ export type User = {
   gender: Gender;
   avatarPath?: string;
 };
+
+export const ANONYMOUS_AVATAR = "/anonymous.png";
 
 export const AUTH_STATE = <const>{
   INITIAL: "INITIAL",
@@ -193,4 +195,16 @@ export const uploadAvatar = async (
   const path = `avatars/${userId}/${userId}.${ext}`;
   await uploadBytes(ref(storage, path), file);
   return path;
+};
+
+export const getAvatarSrc = async (user: User) => {
+  if (!user.avatarPath) return ANONYMOUS_AVATAR;
+
+  return getDownloadURL(ref(getStorage(), user.avatarPath));
+};
+
+export const getAvatarSrcFromCurrentUser = async (currentUser: CurrentUser) => {
+  if (currentUser.authState !== AUTH_STATE.LOGGED_IN) return ANONYMOUS_AVATAR;
+
+  return getAvatarSrc(currentUser.user);
 };

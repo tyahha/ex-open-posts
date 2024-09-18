@@ -24,7 +24,7 @@ export default function PostsPage() {
 
   return (
     <>
-      <Header />
+      <Header currentUser={currentUser} />
       {currentUser.authState !== AUTH_STATE.INITIAL &&
         currentUser.authState !== AUTH_STATE.LOGGED_OUT && (
           <MainContent

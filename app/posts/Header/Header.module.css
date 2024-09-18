@@ -27,6 +27,11 @@
   }
 }
 
+.avatar {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .menuBody {
   visibility: hidden;
   position: fixed;

@@ -9,6 +9,7 @@ import {
   User,
   Gender,
   uploadAvatar,
+  ANONYMOUS_AVATAR,
 } from "@/app/lib/users";
 import commonStyles from "@/app/ui/common.module.css";
 import clsx from "clsx";
@@ -48,7 +49,7 @@ export const PleaseRegisterProfile = ({
 }: Props) => {
   const [avatar, setAvatar] = useState<File | undefined>();
   const avatarUrl = useMemo(
-    () => (avatar ? URL.createObjectURL(avatar) : "/anonymous.png"),
+    () => (avatar ? URL.createObjectURL(avatar) : ANONYMOUS_AVATAR),
     [avatar],
   );
   const [name, setName] = useState("");

@@ -6,9 +6,27 @@ import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import Image from "next/image";
 import clsx from "clsx";
 import styles from "./Header.module.css";
+import {
+  ANONYMOUS_AVATAR,
+  CurrentUser,
+  getAvatarSrcFromCurrentUser,
+} from "@/app/lib/users";
 
-export const Header = () => {
+type Props = {
+  currentUser?: CurrentUser;
+};
+
+export const Header = ({ currentUser }: Props) => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+  const [avatarSrc, setAvatarSrc] = useState(ANONYMOUS_AVATAR);
+  useEffect(() => {
+    if (!currentUser) {
+      setAvatarSrc(ANONYMOUS_AVATAR);
+      return;
+    }
+    getAvatarSrcFromCurrentUser(currentUser).then(setAvatarSrc);
+  }, [currentUser]);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -43,10 +61,11 @@ export const Header = () => {
         onClick={() => setIsOpenMenu(true)}
       >
         <Image
-          src="/anonymous.png"
+          src={avatarSrc}
           alt="ユーザーのプロフィール画像"
           width={44}
           height={44}
+          className={styles.avatar}
         />
       </button>
       <div
