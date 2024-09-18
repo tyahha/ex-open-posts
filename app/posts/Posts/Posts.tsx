@@ -1,7 +1,7 @@
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
-import { addPost, Post } from "@/app/lib/posts";
+import { addPost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const Posts = ({ currentUserId }: Props) => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, addPostLocal] = usePosts();
 
   const postsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -24,7 +24,8 @@ export const Posts = ({ currentUserId }: Props) => {
     const trimmedText = text.trim();
     if (!trimmedText) return;
 
-    await addPost(currentUserId, text);
+    const addedPost = await addPost(currentUserId, text);
+    addPostLocal(addedPost);
 
     setText("");
   };

@@ -6,7 +6,7 @@ import { serverTimestamp } from "@firebase/firestore";
 export type RawUser = Omit<User, "id">;
 
 export type RawPost = Omit<Post, "id" | "createdAt"> & {
-  createdAt: Timestamp;
+  createdAt?: Timestamp;
 };
 
 export type SeedPost = Omit<RawPost, "createdAt"> & {
