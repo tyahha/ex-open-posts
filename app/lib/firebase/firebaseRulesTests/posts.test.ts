@@ -6,7 +6,7 @@ import {
 } from "@firebase/rules-unit-testing";
 import { doc, setDoc } from "@firebase/firestore";
 import { SeedPost } from "@/app/lib/firebase/types";
-import { serverTimestamp } from "@firebase/database";
+import { serverTimestamp } from "@firebase/firestore";
 
 const projectId = "posts-rules-test";
 
@@ -114,6 +114,26 @@ describe("users rules", () => {
       describe("with extra data", () => {
         it("should fail to create", async () => {
           await assertFails(subject({ ...validData, extraKey: "extra" }));
+        });
+      });
+
+      describe("invalid data type", () => {
+        describe("name", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, text: 111 }));
+          });
+        });
+
+        describe("birthDay", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, createdBy: 222 }));
+          });
+        });
+
+        describe("gender", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, createdAt: 333 }));
+          });
         });
       });
     });

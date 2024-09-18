@@ -1,7 +1,7 @@
 import { User } from "@/app/lib/users";
 import { Post } from "@/app/lib/posts";
 import { Timestamp } from "@firebase/firestore";
-import { serverTimestamp } from "@firebase/database";
+import { serverTimestamp } from "@firebase/firestore";
 
 export type RawUser = Omit<User, "id">;
 
