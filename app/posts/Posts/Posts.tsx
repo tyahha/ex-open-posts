@@ -52,6 +52,11 @@ export const Posts = ({ currentUserId }: Props) => {
           className={styles.textInput}
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+              send();
+            }
+          }}
         />
         <div className={commonStyles.buttonBox}>
           <button className={commonStyles.button} onClick={send}>
