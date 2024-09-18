@@ -2,10 +2,20 @@ import {
   getFirebaseAuth,
   getFirestore,
 } from "@/app/lib/firebase/firebaseConfig";
-import { doc, getDoc, setDoc } from "@firebase/firestore";
-import { RawUser } from "@/app/lib/firebase/types";
+import {
+  collection,
+  doc,
+  DocumentSnapshot,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  setDoc,
+} from "@firebase/firestore";
+import { RawPost, RawUser } from "@/app/lib/firebase/types";
 import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Post } from "@/app/lib/posts";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -84,14 +94,10 @@ export const useCurrentUser = () => {
         });
       }
 
-      const rawUser = snapshot.data() as RawUser;
       setCurrentUser({
         authState: AUTH_STATE.LOGGED_IN,
         firebaseUser,
-        user: {
-          id: docRef.id,
-          ...rawUser,
-        },
+        user: rawToUser(snapshot),
       });
     });
   }, []);
@@ -112,4 +118,64 @@ export const registerUser = async (
     id,
     ...rawUser,
   };
+};
+
+export const useUsers = () => {
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      query(collection(getFirestore(), "users")),
+      (snapshot) => {
+        setUsers((prev) => {
+          return snapshot.docChanges().reduce<User[]>(
+            (acc, change) => {
+              const doc = change.doc;
+              if (change.type === "added") {
+                if (acc.findIndex((p) => p.id === doc.id) !== -1) return acc;
+                acc.push(rawToUser(doc));
+                return acc;
+              }
+              if (change.type === "modified") {
+                return acc.map((p) => {
+                  if (p.id !== doc.id) return p;
+                  return rawToUser(doc);
+                });
+              }
+              if (change.type === "removed") {
+                return acc.filter((p) => p.id === doc.id);
+              }
+              return acc;
+            },
+            [...prev],
+          );
+        });
+      },
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  return users;
+};
+
+const rawToUser = (snapshot: DocumentSnapshot): User => {
+  const rawUser = snapshot.data() as RawUser;
+
+  return {
+    id: snapshot.id,
+    ...rawUser,
+  };
+};
+
+export const useGetPostedBy = () => {
+  const users = useUsers();
+
+  return useCallback(
+    (post: Post) => {
+      const user = users.find((u) => u.id === post.createdBy);
+      return user ? user.name : "不明なユーザー";
+    },
+    [users],
+  );
 };

@@ -3,6 +3,7 @@ import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
 import { addPost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
+import { useGetPostedBy } from "@/app/lib/users";
 
 type Props = {
   currentUserId: string;
@@ -30,14 +31,17 @@ export const Posts = ({ currentUserId }: Props) => {
     setText("");
   };
 
+  const getPostedBy = useGetPostedBy();
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.posts} ref={postsRef}>
-        {posts.map(({ text, createdBy, createdAt }, i) => {
+        {posts.map((post) => {
+          const { id, text, createdAt } = post;
           return (
-            <div key={i} className={styles.post}>
+            <div key={id} className={styles.post}>
               <div className={styles.postMeta}>
-                <div className={styles.postedBy}>{createdBy}</div>
+                <div className={styles.postedBy}>{getPostedBy(post)}</div>
                 <div className={styles.postedAt}>
                   {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
                 </div>
