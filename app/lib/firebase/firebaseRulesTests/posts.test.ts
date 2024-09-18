@@ -4,7 +4,7 @@ import {
   initializeTestEnvironment,
   RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, setDoc, Timestamp } from "@firebase/firestore";
+import { doc, getDoc, setDoc, Timestamp } from "@firebase/firestore";
 import { SeedPost } from "@/app/lib/firebase/types";
 import { serverTimestamp } from "@firebase/firestore";
 
@@ -167,6 +167,56 @@ describe("users rules", () => {
             );
           });
         });
+      });
+    });
+  });
+
+  describe("read", () => {
+    describe.each([
+      {
+        description: "own data",
+        data: validData,
+      },
+      {
+        description: "other user data",
+        data: {
+          ...validData,
+          createdBy: "another-user-id",
+        },
+      },
+    ])("$description", ({ data }) => {
+      beforeEach(async () => {
+        await testEnv.withSecurityRulesDisabled(async (ctx) => {
+          const firestore = ctx.firestore();
+          const docRef = doc(firestore, `/open-posts/${postId}`);
+          await setDoc(docRef, data);
+        });
+      });
+
+      it("should fail without authentication", async () => {
+        const firestore = testEnv.unauthenticatedContext().firestore();
+        const docRef = doc(firestore, `/open-posts/${postId}`);
+        await assertFails(getDoc(docRef));
+      });
+
+      it("should fail with user with unverified email", async () => {
+        const firestore = testEnv.authenticatedContext(userId).firestore();
+        const docRef = doc(firestore, `/open-posts/${postId}`);
+        await assertFails(getDoc(docRef));
+      });
+
+      it("should success with user with verified email", async () => {
+        const firestore = testEnv
+          .authenticatedContext(userId, { email_verified: true })
+          .firestore();
+        const docRef = doc(firestore, `/open-posts/${postId}`);
+        const retData = (await getDoc(docRef)).data();
+        expect(retData).toEqual(
+          expect.objectContaining({
+            ...data,
+            createdAt: expect.any(Object),
+          }),
+        );
       });
     });
   });
