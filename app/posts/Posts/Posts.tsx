@@ -1,7 +1,7 @@
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
-import { addPost, usePosts } from "@/app/lib/posts";
+import { addPost, deletePost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
 import { useGetPostedBy } from "@/app/lib/users";
 
@@ -46,7 +46,12 @@ export const Posts = ({ currentUserId }: Props) => {
                   {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
                 </div>
                 {currentUserId === post.createdBy && (
-                  <button className={styles.deletePost}>削除</button>
+                  <button
+                    className={styles.deletePost}
+                    onClick={() => deletePost(post)}
+                  >
+                    削除
+                  </button>
                 )}
               </div>
               <div className={styles.postedText}>{text}</div>

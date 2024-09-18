@@ -3,6 +3,8 @@ import { RawPost, SeedPost } from "@/app/lib/firebase/types";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   DocumentSnapshot,
   getDoc,
   onSnapshot,
@@ -72,7 +74,7 @@ export const usePosts = () => {
               });
             }
             if (change.type === "removed") {
-              return acc.filter((p) => p.id === doc.id);
+              return acc.filter((p) => p.id !== doc.id);
             }
             return acc;
           },
@@ -109,4 +111,10 @@ const dataToPostForce = (snapshot: DocumentSnapshot): Post => {
     createdBy: rawPost.createdBy,
     createdAt: rawPost.createdAt?.toMillis() || new Date().getTime(),
   };
+};
+
+export const deletePost = async (post: Post) => {
+  const firestore = getFirestore();
+  const docRef = doc(firestore, `open-posts/${post.id}`);
+  await deleteDoc(docRef);
 };
