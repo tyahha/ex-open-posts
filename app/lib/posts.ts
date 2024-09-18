@@ -51,7 +51,7 @@ export const usePosts = () => {
 
     const q = query(postsRef, orderBy("createdAt"));
 
-    onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setPosts((prev) => {
         return snapshot.docChanges().reduce<Post[]>(
           (acc, change) => {
@@ -80,6 +80,8 @@ export const usePosts = () => {
         );
       });
     });
+
+    return () => unsubscribe();
   }, []);
 
   return [posts, addPostLocal] as const;
