@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "firebase emulators:exec --only firestore 'jest'"
+    "test": "firebase emulators:exec --only firestore,storage 'jest'"
   },
   "dependencies": {
     "@types/firebase": "^3.2.1",
