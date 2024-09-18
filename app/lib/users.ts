@@ -81,6 +81,7 @@ export const useCurrentUser = () => {
           authState: AUTH_STATE.HAS_NOT_VERIFIED_EMAIL,
           firebaseUser,
         });
+        return;
       }
 
       const firestore = getFirestore();
@@ -92,6 +93,7 @@ export const useCurrentUser = () => {
           authState: AUTH_STATE.HAS_NOT_REGISTERED_PROFILE,
           firebaseUser,
         });
+        return;
       }
 
       setCurrentUser({
