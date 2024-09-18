@@ -77,6 +77,12 @@ describe("users rules", () => {
             await assertSucceeds(subject());
           });
 
+          it("should success to create with avatarPath", async () => {
+            await assertSucceeds(
+              subject({ ...validData, avatarPath: "dummy-avatar-path" }),
+            );
+          });
+
           describe.each(Object.values(GENDER))("gender %s", (gender) => {
             it("should success to create", async () => {
               await assertSucceeds(subject({ ...validData, gender }));
@@ -140,6 +146,12 @@ describe("users rules", () => {
         describe("gender", () => {
           it("should fail to create", async () => {
             await assertFails(subject({ ...validData, gender: "VALID" }));
+          });
+        });
+
+        describe("avatarPath", () => {
+          it("should fail to create", async () => {
+            await assertFails(subject({ ...validData, avatarPath: 333 }));
           });
         });
       });

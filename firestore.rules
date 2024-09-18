@@ -13,10 +13,11 @@ service cloud.firestore {
       function isValidUserData(data) {
         let keys = ["name", "birthDay", "gender"];
         return data.keys().hasAll(keys)
-          && data.keys().hasOnly(keys)
+          && data.keys().hasOnly(keys.concat(["avatarPath"]))
           && data.name is string && data.name.size() > 0 && data.name.size() <= 100
           && data.birthDay is string && data.birthDay.matches("^(19|20)[0-9][0-9][-\\/. ](0[1-9]|1[012])[-\\/. ](0[1-9]|[12][0-9]|3[01])$")
           && data.gender in ["MALE", "FEMALE", "OTHER"]
+          && (!('avatarPath' in data) || data.avatarPath is string)
       }
     }
 

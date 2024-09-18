@@ -31,6 +31,7 @@ export type User = {
   name: string;
   birthDay: string;
   gender: Gender;
+  avatarPath?: string;
 };
 
 export const AUTH_STATE = <const>{
