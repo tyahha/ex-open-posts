@@ -22,7 +22,13 @@ service cloud.firestore {
 
     match /open-posts/{postId} {
       allow read: if isLoggedIn();
-      allow write: if isLoggedIn();
+      allow write: if isLoggedIn() && isValidPostData(request.resource.data);
+
+      function isValidPostData(data) {
+        let keys = ["text", "createdBy", "createdAt"];
+        return data.keys().hasAll(keys)
+          && data.keys().hasOnly(keys);
+      }
     }
   }
 }

@@ -78,5 +78,44 @@ describe("users rules", () => {
         });
       });
     });
+
+    describe("with invalid data", () => {
+      const subject = async (data: object) => {
+        const docRef = doc(
+          await getAuthenticatedFirestore(),
+          `/open-posts/${postId}`,
+        );
+        return setDoc(docRef, data);
+      };
+
+      describe("partial data", () => {
+        describe("no text", () => {
+          it("should fail to create", async () => {
+            const { text: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
+        });
+
+        describe("no createBy", () => {
+          it("should fail to create", async () => {
+            const { createdBy: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
+        });
+
+        describe("no createAt", () => {
+          it("should fail to create", async () => {
+            const { createdAt: _, ...data } = validData;
+            await assertFails(subject(data));
+          });
+        });
+      });
+
+      describe("with extra data", () => {
+        it("should fail to create", async () => {
+          await assertFails(subject({ ...validData, extraKey: "extra" }));
+        });
+      });
+    });
   });
 });
