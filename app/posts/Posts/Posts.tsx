@@ -3,7 +3,8 @@ import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
 import { addPost, deletePost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
-import { useGetPostedBy } from "@/app/lib/users";
+import { ANONYMOUS_AVATAR, useGetPostedBy } from "@/app/lib/users";
+import Image from "next/image";
 
 type Props = {
   currentUserId: string;
@@ -38,23 +39,33 @@ export const Posts = ({ currentUserId }: Props) => {
       <div className={styles.posts} ref={postsRef}>
         {posts.map((post) => {
           const { id, text, createdAt } = post;
+          const postedBy = getPostedBy(post);
           return (
             <div key={id} className={styles.post}>
-              <div className={styles.postMeta}>
-                <div className={styles.postedBy}>{getPostedBy(post)}</div>
-                <div className={styles.postedAt}>
-                  {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
+              <Image
+                src={ANONYMOUS_AVATAR}
+                alt={`${postedBy}さんのプロフィール画像`}
+                width={48}
+                height={48}
+                className={styles.avatar}
+              />
+              <div className={styles.postContent}>
+                <div className={styles.postMeta}>
+                  <div className={styles.postedBy}>{postedBy}</div>
+                  <div className={styles.postedAt}>
+                    {format(createdAt, "yyyy年MM月dd日 HH:mm:ss")}
+                  </div>
+                  {currentUserId === post.createdBy && (
+                    <button
+                      className={styles.deletePost}
+                      onClick={() => deletePost(post)}
+                    >
+                      削除
+                    </button>
+                  )}
                 </div>
-                {currentUserId === post.createdBy && (
-                  <button
-                    className={styles.deletePost}
-                    onClick={() => deletePost(post)}
-                  >
-                    削除
-                  </button>
-                )}
+                <div className={styles.postedText}>{text}</div>
               </div>
-              <div className={styles.postedText}>{text}</div>
             </div>
           );
         })}

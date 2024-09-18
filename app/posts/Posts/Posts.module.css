@@ -16,8 +16,7 @@
 }
 
 .post {
-  padding-bottom: 8px;
-  margin: 4px;
+  display: flex;
   border-bottom: solid 1px #a5a5a5;
 
   &:first-child {
@@ -27,6 +26,17 @@
   &:last-child {
     border-bottom: none;
   }
+}
+
+.avatar {
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.postContent {
+  flex-grow: 1;
+  padding-bottom: 8px;
+  margin: 4px;
 }
 
 .postMeta {
