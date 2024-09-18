@@ -1,10 +1,14 @@
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
-import { Post } from "@/app/lib/posts";
+import { addPost, Post } from "@/app/lib/posts";
 import { format } from "date-fns";
 
-export const Posts = () => {
+type Props = {
+  currentUserId: string;
+};
+
+export const Posts = ({ currentUserId }: Props) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   const postsRef = useRef<HTMLDivElement>(null);
@@ -14,15 +18,15 @@ export const Posts = () => {
     postsElm.scrollTop = postsElm.scrollHeight;
   }, [posts]);
 
-  const send = () => {
-    setPosts((prev) => [
-      ...prev,
-      {
-        text: "初めての投稿のテスト。\n開業文字はそのまま開業してほしい。",
-        createdBy: "山田 太郎",
-        createdAt: new Date().getTime(),
-      },
-    ]);
+  const [text, setText] = useState("");
+
+  const send = async () => {
+    const trimmedText = text.trim();
+    if (!trimmedText) return;
+
+    await addPost(currentUserId, text);
+
+    setText("");
   };
 
   return (
@@ -43,7 +47,11 @@ export const Posts = () => {
         })}
       </div>
       <div className={styles.control}>
-        <textarea className={styles.textInput} />
+        <textarea
+          className={styles.textInput}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
         <div className={commonStyles.buttonBox}>
           <button className={commonStyles.button} onClick={send}>
             送信

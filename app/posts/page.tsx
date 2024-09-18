@@ -49,7 +49,9 @@ export default function PostsPage() {
                 }
               />
             )}
-            {currentUser.authState === AUTH_STATE.LOGGED_IN && <Posts />}
+            {currentUser.authState === AUTH_STATE.LOGGED_IN && (
+              <Posts currentUserId={currentUser.firebaseUser.uid} />
+            )}
           </MainContent>
         )}
     </>
