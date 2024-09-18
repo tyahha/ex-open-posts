@@ -1,6 +1,6 @@
 import commonStyles from "@/app/ui/common.module.css";
 import styles from "./Posts.module.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Post } from "@/app/lib/posts";
 import { registerLocale } from "react-datepicker";
 import { ja } from "date-fns/locale/ja";
@@ -9,6 +9,13 @@ registerLocale("ja", ja);
 
 export const Posts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+
+  const postsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const postsElm = postsRef.current;
+    if (!postsElm) return;
+    postsElm.scrollTop = postsElm.scrollHeight;
+  }, [posts]);
 
   const send = () => {
     setPosts((prev) => [
@@ -23,7 +30,7 @@ export const Posts = () => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.posts}>
+      <div className={styles.posts} ref={postsRef}>
         {posts.map(({ text, createdBy, createdAt }, i) => {
           return (
             <div key={i} className={styles.post}>
