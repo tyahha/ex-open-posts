@@ -69,10 +69,20 @@
   word-wrap: break-word;
 }
 
+.textInputWrapper {
+  position: relative;
+}
+
 .textInput {
   border-radius: 8px;
   padding: 8px;
   height: calc(4rem + 24px);
   resize: none;
   width: 100%;
+}
+
+.error {
+  position: absolute;
+  left: 4px;
+  bottom: -1rem;
 }

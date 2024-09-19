@@ -24,4 +24,9 @@
     background-color: #FFF7F7;
     color: black;
   }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: default;
+  }
 }

@@ -5,10 +5,14 @@ import { addPost, deletePost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
 import { getUserName, useGetPostedByUser } from "@/app/lib/users";
 import { Avatar } from "@/app/posts/Posts/Avatar";
+import formStyles from "@/app/ui/form.module.css";
+import clsx from "clsx";
 
 type Props = {
   currentUserId: string;
 };
+
+const TEXT_LIMIT = 140;
 
 export const Posts = ({ currentUserId }: Props) => {
   const [posts, addPostLocal] = usePosts();
@@ -22,9 +26,11 @@ export const Posts = ({ currentUserId }: Props) => {
 
   const [text, setText] = useState("");
 
+  const trimmedText = text.trim();
+  const isOverLimit = trimmedText.length > TEXT_LIMIT;
+
   const send = async () => {
-    const trimmedText = text.trim();
-    if (!trimmedText) return;
+    if (!trimmedText || isOverLimit) return;
 
     const addedPost = await addPost(currentUserId, text);
     addPostLocal(addedPost);
@@ -66,18 +72,29 @@ export const Posts = ({ currentUserId }: Props) => {
         })}
       </div>
       <div className={styles.control}>
-        <textarea
-          className={styles.textInput}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-              send();
-            }
-          }}
-        />
+        <div className={styles.textInputWrapper}>
+          <textarea
+            className={styles.textInput}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                send();
+              }
+            }}
+          />
+          {isOverLimit && (
+            <p className={clsx(formStyles.inputError, styles.error)}>
+              文章は{TEXT_LIMIT}以内にしてください。
+            </p>
+          )}
+        </div>
         <div className={commonStyles.buttonBox}>
-          <button className={commonStyles.button} onClick={send}>
+          <button
+            className={commonStyles.button}
+            onClick={send}
+            disabled={isOverLimit}
+          >
             送信
           </button>
         </div>
