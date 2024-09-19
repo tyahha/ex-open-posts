@@ -91,8 +91,9 @@ export const useCurrentUser = () => {
       const params = new URLSearchParams(location.search);
       if (params.get("from") === "verify") {
         await getIdToken(firebaseUser, true);
-        router.replace("/posts");
       }
+
+      router.replace("/posts");
 
       if (!firebaseUser.emailVerified) {
         setCurrentUser({

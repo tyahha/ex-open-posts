@@ -10,6 +10,7 @@ import clsx from "clsx";
 import { getFirebaseAuth } from "@/app/lib/firebase/firebaseConfig";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/app/lib/users";
 
 const LoginFormSchema = z.object({
   email: z.string().email("メールアドレスを入力してください"),
@@ -17,6 +18,8 @@ const LoginFormSchema = z.object({
 });
 
 export default function LoginPage() {
+  useCurrentUser();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<
