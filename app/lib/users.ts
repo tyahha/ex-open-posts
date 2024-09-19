@@ -21,7 +21,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { Post } from "@/app/lib/posts";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -76,7 +76,6 @@ export const useCurrentUser = () => {
     authState: AUTH_STATE.INITIAL,
   });
 
-  const params = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
@@ -89,6 +88,7 @@ export const useCurrentUser = () => {
         return;
       }
 
+      const params = new URLSearchParams(location.search);
       if (params.get("from") === "verify") {
         await getIdToken(firebaseUser, true);
         router.replace("/posts");
@@ -122,7 +122,7 @@ export const useCurrentUser = () => {
     });
 
     return () => unsubscribe();
-  }, [params, router]);
+  }, [router]);
 
   return [currentUser, setCurrentUser] as const;
 };
