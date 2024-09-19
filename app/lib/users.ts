@@ -13,10 +13,15 @@ import {
   setDoc,
 } from "@firebase/firestore";
 import { RawUser } from "@/app/lib/firebase/types";
-import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
+import {
+  getIdToken,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from "firebase/auth";
 import { useCallback, useEffect, useState } from "react";
 import { Post } from "@/app/lib/posts";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const GENDER = <const>{
   MALE: "MALE",
@@ -70,6 +75,9 @@ export const useCurrentUser = () => {
     authState: AUTH_STATE.INITIAL,
   });
 
+  const params = useSearchParams();
+  const router = useRouter();
+
   useEffect(() => {
     const auth = getFirebaseAuth();
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -78,6 +86,11 @@ export const useCurrentUser = () => {
           authState: AUTH_STATE.LOGGED_OUT,
         });
         return;
+      }
+
+      if (params.get("from") === "verify") {
+        await getIdToken(firebaseUser, true);
+        router.replace("/posts");
       }
 
       if (!firebaseUser.emailVerified) {
@@ -108,7 +121,7 @@ export const useCurrentUser = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [params, router]);
 
   return [currentUser, setCurrentUser] as const;
 };
