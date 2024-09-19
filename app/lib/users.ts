@@ -72,7 +72,7 @@ export const useCurrentUser = () => {
 
   useEffect(() => {
     const auth = getFirebaseAuth();
-    onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setCurrentUser({
           authState: AUTH_STATE.LOGGED_OUT,
@@ -106,6 +106,8 @@ export const useCurrentUser = () => {
         user: rawToUser(snapshot),
       });
     });
+
+    return () => unsubscribe();
   }, []);
 
   return [currentUser, setCurrentUser] as const;
