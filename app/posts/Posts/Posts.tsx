@@ -3,12 +3,7 @@ import styles from "./Posts.module.css";
 import { useEffect, useRef, useState } from "react";
 import { addPost, deletePost, usePosts } from "@/app/lib/posts";
 import { format } from "date-fns";
-import {
-  ANONYMOUS_AVATAR,
-  getUserName,
-  useGetPostedByUser,
-} from "@/app/lib/users";
-import Image from "next/image";
+import { getUserName, useGetPostedByUser } from "@/app/lib/users";
 import { Avatar } from "@/app/posts/Posts/Avatar";
 
 type Props = {
