@@ -144,10 +144,10 @@ describe("users rules", () => {
           });
         });
 
-        describe("text is over 1000 length", () => {
+        describe("text is over 140 length", () => {
           it("should fail to create", async () => {
             await assertFails(
-              subject({ ...validData, text: Array(1001).fill("a") }),
+              subject({ ...validData, text: Array(141).fill("a") }),
             );
           });
         });
