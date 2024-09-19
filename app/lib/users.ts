@@ -37,6 +37,7 @@ export type User = {
   birthDay: string;
   gender: Gender;
   avatarPath?: string;
+  avatarSrc?: string;
 };
 
 export const ANONYMOUS_AVATAR = "/anonymous.png";
@@ -154,13 +155,25 @@ export const useUsers = () => {
               const doc = change.doc;
               if (change.type === "added") {
                 if (acc.findIndex((p) => p.id === doc.id) !== -1) return acc;
-                acc.push(rawToUser(doc));
+
+                const user = rawToUser(doc);
+                acc.push(user);
+
+                getAvatarSrc(user).then((avatarSrc) => {
+                  setUsers((prev) =>
+                    prev.map((u) => {
+                      if (u.id !== user.id) return u;
+                      return { ...u, avatarSrc };
+                    }),
+                  );
+                });
+
                 return acc;
               }
               if (change.type === "modified") {
                 return acc.map((p) => {
                   if (p.id !== doc.id) return p;
-                  return rawToUser(doc);
+                  return { ...p, ...rawToUser(doc) };
                 });
               }
               if (change.type === "removed") {
@@ -185,6 +198,7 @@ const rawToUser = (snapshot: DocumentSnapshot): User => {
 
   return {
     id: snapshot.id,
+    avatarSrc: ANONYMOUS_AVATAR,
     ...rawUser,
   };
 };
